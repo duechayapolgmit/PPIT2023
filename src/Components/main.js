@@ -14,19 +14,22 @@ export class Main extends React.Component {
         })
     }
 
+    getPosition(){
+        
+    }
+
     render() {
         const mapStyles = {
             width: '100%',
             height: '100%',
         };
-        console.log(this.state.latitude + ", "+this.state.longitude);
         return (
             <Map
                 google={this.props.google}
-                zoom={8}
+                zoom={15}
                 style={mapStyles}
-                initialCenter={{ lat: this.state.latitude, lng: this.state.longitude }}
-
+                initialCenter={{lat: 53.27427890260826, lng: -9.049029548763558}}
+                center= {{ lat: this.state.latitude, lng: this.state.longitude }}
             >
                 <Marker position={{ lat: this.state.latitude, lng: this.state.longitude }} />
             </Map>
