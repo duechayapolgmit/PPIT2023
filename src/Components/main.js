@@ -43,7 +43,7 @@ export class Main extends React.Component {
                         onClick={this.onMarkerClick}>
                 </Marker>
                 <InfoWindow marker={this.state.activeMarker} visible={this.state.showingInfoWindow}>
-                    <InfoCard marker={this.state.activeMarker.name}/>
+                    <InfoCard space={{empty:200, full:200}} marker={this.state.activeMarker.name}/>
                 </InfoWindow>
             </Map>
 
