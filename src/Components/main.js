@@ -1,9 +1,13 @@
 import React from "react";
-import { Map, GoogleApiWrapper, Marker } from 'google-maps-react';
+import { Map, GoogleApiWrapper, Marker, InfoWindow } from 'google-maps-react';
+import { InfoCard } from "./info";
 
 export class Main extends React.Component {
 
     state = {
+        showingInfoWindow: false,
+        selectedPlace: {},
+        activeMarker: {},
         latitude: 0,
         longitude: 0
     }
@@ -14,8 +18,11 @@ export class Main extends React.Component {
         })
     }
 
-    getPosition(){
-        
+    onMarkerClick = (props, marker, e) => {
+        this.setState({
+            selectedPlace: props,
+            activeMarker: marker,
+            showingInfoWindow: true});
     }
 
     render() {
@@ -30,8 +37,14 @@ export class Main extends React.Component {
                 style={mapStyles}
                 initialCenter={{lat: 53.27427890260826, lng: -9.049029548763558}}
                 center= {{ lat: this.state.latitude, lng: this.state.longitude }}
+                streetViewControl={false}
             >
-                <Marker position={{ lat: this.state.latitude, lng: this.state.longitude }} />
+                <Marker title={'Current Location'} name={'Current Location'} position={{ lat: this.state.latitude, lng: this.state.longitude }} 
+                        onClick={this.onMarkerClick}>
+                </Marker>
+                <InfoWindow marker={this.state.activeMarker} visible={this.state.showingInfoWindow}>
+                    <InfoCard space={{empty:200, full:200}} type={"Pay/Display"} marker={this.state.activeMarker.name}/>
+                </InfoWindow>
             </Map>
 
         )
