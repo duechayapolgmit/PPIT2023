@@ -27,6 +27,7 @@ export class InfoCard extends React.Component{
                     {this.props.marker}
                 </h1>
                 <p>Capacity: {this.props.space.empty} / {this.props.space.full}</p>
+                <p>{this.props.type}</p>
             </div>
         )
     }
