@@ -58,14 +58,15 @@ export class Main extends React.Component {
                 initialCenter={{lat: 53.27427890260826, lng: -9.049029548763558}}
                 center= {{ lat: this.state.latitude, lng: this.state.longitude }}
                 streetViewControl={false}
+                mapTypeControl={false}
             >
-                <Marker title={'Current Location'} name={'Current Location'} position={{ lat: this.state.latitude, lng: this.state.longitude }} 
+                <Marker title={'Current Location'} name={'Current Location'} occupied={0} full={0} type={""} position={{ lat: this.state.latitude, lng: this.state.longitude }} 
                         onClick={this.onMarkerClick}>
                 </Marker>
 
                 <Markers markers={this.state.markers} onMarkerClick={this.onMarkerClick}/>
                 <InfoWindow marker={this.state.activeMarker} visible={this.state.showingInfoWindow}>
-                    <InfoCard space={{empty:this.state.activeMarker.occupied, full:this.state.activeMarker.full}} type={"Pay/Display"} marker={this.state.activeMarker.name}/>
+                    <InfoCard space={{empty:this.state.activeMarker.occupied, full:this.state.activeMarker.full}} type={this.state.activeMarker.type} marker={this.state.activeMarker.name}/>
                 </InfoWindow>
             </Map>
 
