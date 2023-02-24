@@ -42,6 +42,7 @@ export class Main extends React.Component {
             selectedPlace: props,
             activeMarker: marker,
             showingInfoWindow: true});
+        console.log(marker)
         }
 
     render() {
@@ -61,11 +62,11 @@ export class Main extends React.Component {
                 <Marker title={'Current Location'} name={'Current Location'} position={{ lat: this.state.latitude, lng: this.state.longitude }} 
                         onClick={this.onMarkerClick}>
                 </Marker>
-                <InfoWindow marker={this.state.activeMarker} visible={this.state.showingInfoWindow}>
-                    <InfoCard space={{empty:200, full:200}} type={"Pay/Display"} marker={this.state.activeMarker.name}/>
-                </InfoWindow>
 
-                <Markers markers={this.state.markers}></Markers>
+                <Markers markers={this.state.markers} onMarkerClick={this.onMarkerClick}/>
+                <InfoWindow marker={this.state.activeMarker} visible={this.state.showingInfoWindow}>
+                    <InfoCard space={{empty:this.state.activeMarker.occupied, full:this.state.activeMarker.full}} type={"Pay/Display"} marker={this.state.activeMarker.name}/>
+                </InfoWindow>
             </Map>
 
         )
