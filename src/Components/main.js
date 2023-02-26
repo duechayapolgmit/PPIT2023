@@ -21,7 +21,6 @@ export class Main extends React.Component {
     }
 
     componentDidMount() {
-        var markersLocation, currentPosition;
         navigator.geolocation.getCurrentPosition(pos => {
             this.setState({ latitude: pos.coords.latitude, longitude: pos.coords.longitude})
         })
@@ -42,7 +41,6 @@ export class Main extends React.Component {
             selectedPlace: props,
             activeMarker: marker,
             showingInfoWindow: true});
-        console.log(marker)
         }
 
     render() {
@@ -66,10 +64,10 @@ export class Main extends React.Component {
 
                 <Markers markers={this.state.markers} onMarkerClick={this.onMarkerClick}/>
                 <InfoWindow marker={this.state.activeMarker} visible={this.state.showingInfoWindow}>
-                    <InfoCard space={{empty:this.state.activeMarker.occupied, full:this.state.activeMarker.full}} type={this.state.activeMarker.type} marker={this.state.activeMarker.name}/>
+                    <InfoCard space={{occupied:this.state.activeMarker.occupied, full:this.state.activeMarker.full}} type={this.state.activeMarker.type} marker={this.state.activeMarker.name}/>
                 </InfoWindow>
+                
             </Map>
-
         )
 
     }
