@@ -2,6 +2,8 @@ import React from "react";
 import { Map, GoogleApiWrapper, Marker, InfoWindow } from 'google-maps-react';
 import { InfoCard } from "./info";
 import { Markers } from "./markers";
+import FindButton from "./find";
+import MarkersList from "./listMarkers";
 
 
 export class Main extends React.Component {
@@ -48,10 +50,12 @@ export class Main extends React.Component {
             width: '100%',
             height: '100%',
         };
+        // Use z-index CSS for overlays - set it higher than 100
         return (
             <Map
+                className="background"
                 google={this.props.google}
-                zoom={15}
+                zoom={14}
                 style={mapStyles}
                 initialCenter={{lat: 53.27427890260826, lng: -9.049029548763558}}
                 center= {{ lat: this.state.latitude, lng: this.state.longitude }}
@@ -66,6 +70,8 @@ export class Main extends React.Component {
                 <InfoWindow marker={this.state.activeMarker} visible={this.state.showingInfoWindow}>
                     <InfoCard space={{occupied:this.state.activeMarker.occupied, full:this.state.activeMarker.full}} type={this.state.activeMarker.type} marker={this.state.activeMarker.name}/>
                 </InfoWindow>
+                <MarkersList/>
+                <FindButton/>
                 
             </Map>
         )

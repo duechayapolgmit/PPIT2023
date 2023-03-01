@@ -15,3 +15,32 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+.background {
+  z-index: 100;
+}
+
+.overlay {
+  position: relative;
+  z-index: 105;
+}
+
+.find-button {
+  top:90%;
+  left:45%;
+  width: 10%;
+  cursor:pointer;
+}
+
+.list-markers {
+  width:20%;
+  height:100%;
+  text-align: left;
+  padding:1%;
+  top:0;
+  left:80%;
+}
+
+.list-markers-single {
+  display:flex
+}
