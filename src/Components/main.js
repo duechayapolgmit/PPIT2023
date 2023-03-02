@@ -30,7 +30,6 @@ export class Main extends React.Component {
         fetch('https://services-eu1.arcgis.com/Zmea819kt4Uu8kML/arcgis/rest/services/CarParkingOpenData/FeatureServer/0/query?outFields=*&where=1%3D1&f=geojson')
             .then((response) => response.json())
             .then((responseJson) => {
-                console.log(responseJson);
                 this.setState({ markers: responseJson.features })
             })
             .catch((error) => {
@@ -44,6 +43,13 @@ export class Main extends React.Component {
             activeMarker: marker,
             showingInfoWindow: true});
         }
+
+    onFindButtonClick = (markers) => {
+        this.setState({
+            markers: markers
+        })
+        console.log(markers)
+    }
 
     render() {
         const mapStyles = {
@@ -70,8 +76,8 @@ export class Main extends React.Component {
                 <InfoWindow marker={this.state.activeMarker} visible={this.state.showingInfoWindow}>
                     <InfoCard space={{occupied:this.state.activeMarker.occupied, full:this.state.activeMarker.full}} type={this.state.activeMarker.type} marker={this.state.activeMarker.name}/>
                 </InfoWindow>
-                <MarkersList/>
-                <FindButton/>
+                <MarkersList markers={this.state.markers}/>
+                <FindButton lat={this.state.latitude} lng={this.state.longitude} markers={this.state.markers} onFindButtonClick={this.onFindButtonClick}/>
                 
             </Map>
         )

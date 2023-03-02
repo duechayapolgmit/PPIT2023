@@ -5,7 +5,7 @@ export default class MarkersList extends React.Component {
     render(){
         return (
         <div className="overlay list-markers bg-teal-500">
-            <h1 className="text-lg">List of Markers</h1>
+            <h1 className="text-lg">List of Markers</h1><hr/>
             <MarkerInfo/>
         </div>
         )
@@ -16,9 +16,15 @@ export default class MarkersList extends React.Component {
 class MarkerInfo extends React.Component {
     render(){
         return (
-            <div className="list-markers-single">
-                <img src={markerImage}/>
+            <div>
+                <div className="list-markers-single">
+                    <img src={markerImage}/>
+                    <p>Marker Name<br/>Cap<br/>Type</p>
+                </div>
+                <hr/>
             </div>
+            
+           
         )
         
     }
