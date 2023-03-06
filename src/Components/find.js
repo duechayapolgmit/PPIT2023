@@ -4,9 +4,7 @@ export default class FindButton extends React.Component {
 
     getNearestSpace(lat, lng, markers) 
     {
-        console.log(lat);
-        console.log(lng);
-        console.log(markers);
+
 
         markers.forEach(marker => {
             let coords = marker.geometry.coordinates

@@ -41,15 +41,22 @@ code {
   padding:1%;
   top:0;
   left:80%;
+  visibility:hidden;
+  overflow-y: scroll;
+}
+
+.menu-show {
+  visibility:visible;
 }
 
 .list-markers-single {
   display:flex
 }
 
-img {
+.list-markers-image {
   width:20%;
   margin-right:2%;
+  text-align: center;
 }
 
 hr {

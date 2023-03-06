@@ -3,7 +3,7 @@ import { Map, GoogleApiWrapper, Marker, InfoWindow } from 'google-maps-react';
 import { InfoCard } from "./info";
 import { Markers } from "./markers";
 import FindButton from "./find";
-import MarkersList from "./listMarkers";
+import MarkersSidebar from "./listMarkers";
 
 
 export class Main extends React.Component {
@@ -48,7 +48,8 @@ export class Main extends React.Component {
         this.setState({
             markers: markers
         })
-        console.log(markers)
+        document.getElementById("markers-list-menu").classList.add("menu-show")
+        console.log(markers);
     }
 
     render() {
@@ -76,7 +77,7 @@ export class Main extends React.Component {
                 <InfoWindow marker={this.state.activeMarker} visible={this.state.showingInfoWindow}>
                     <InfoCard space={{occupied:this.state.activeMarker.occupied, full:this.state.activeMarker.full}} type={this.state.activeMarker.type} marker={this.state.activeMarker.name}/>
                 </InfoWindow>
-                <MarkersList markers={this.state.markers}/>
+                <MarkersSidebar markers={this.state.markers}/>
                 <FindButton lat={this.state.latitude} lng={this.state.longitude} markers={this.state.markers} onFindButtonClick={this.onFindButtonClick}/>
                 
             </Map>
