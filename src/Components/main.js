@@ -2,6 +2,8 @@ import React from "react";
 import { Map, GoogleApiWrapper, Marker, InfoWindow } from 'google-maps-react';
 import { InfoCard } from "./info";
 import { Markers } from "./markers";
+import FindButton from "./find";
+import MarkersSidebar from "./listMarkers";
 
 
 export class Main extends React.Component {
@@ -28,7 +30,6 @@ export class Main extends React.Component {
         fetch('https://services-eu1.arcgis.com/Zmea819kt4Uu8kML/arcgis/rest/services/CarParkingOpenData/FeatureServer/0/query?outFields=*&where=1%3D1&f=geojson')
             .then((response) => response.json())
             .then((responseJson) => {
-                console.log(responseJson);
                 this.setState({ markers: responseJson.features })
             })
             .catch((error) => {
@@ -43,15 +44,25 @@ export class Main extends React.Component {
             showingInfoWindow: true});
         }
 
+    onFindButtonClick = (markers) => {
+        this.setState({
+            markers: markers
+        })
+        document.getElementById("markers-list-menu").classList.add("menu-show")
+        console.log(markers);
+    }
+
     render() {
         const mapStyles = {
             width: '100%',
             height: '100%',
         };
+        // Use z-index CSS for overlays - set it higher than 100
         return (
             <Map
+                className="background"
                 google={this.props.google}
-                zoom={15}
+                zoom={14}
                 style={mapStyles}
                 initialCenter={{lat: 53.27427890260826, lng: -9.049029548763558}}
                 center= {{ lat: this.state.latitude, lng: this.state.longitude }}
@@ -66,6 +77,8 @@ export class Main extends React.Component {
                 <InfoWindow marker={this.state.activeMarker} visible={this.state.showingInfoWindow}>
                     <InfoCard space={{occupied:this.state.activeMarker.occupied, full:this.state.activeMarker.full}} type={this.state.activeMarker.type} marker={this.state.activeMarker.name}/>
                 </InfoWindow>
+                <MarkersSidebar markers={this.state.markers}/>
+                <FindButton lat={this.state.latitude} lng={this.state.longitude} markers={this.state.markers} onFindButtonClick={this.onFindButtonClick}/>
                 
             </Map>
         )
