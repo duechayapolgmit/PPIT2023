@@ -74,10 +74,10 @@ export class Main extends React.Component {
                 </Marker>
 
                 <Markers markers={this.state.markers} onMarkerClick={this.onMarkerClick}/>
-                <InfoWindow marker={this.state.activeMarker} visible={this.state.showingInfoWindow}>
-                    <InfoCard space={{occupied:this.state.activeMarker.occupied, full:this.state.activeMarker.full}} type={this.state.activeMarker.type} marker={this.state.activeMarker.name}/>
+                <InfoWindow  marker={this.state.activeMarker} visible={this.state.showingInfoWindow}>
+                    <InfoCard lat={this.state.latitude} lon={this.state.longitude} space={{occupied:this.state.activeMarker.occupied, full:this.state.activeMarker.full}} type={this.state.activeMarker.type} marker={this.state.selectedPlace}/>
                 </InfoWindow>
-                <MarkersSidebar markers={this.state.markers}/>
+                <MarkersSidebar markers={this.state.markers} lat = {this.state.latitude} lon = {this.state.longitude}/>
                 <FindButton lat={this.state.latitude} lng={this.state.longitude} markers={this.state.markers} onFindButtonClick={this.onFindButtonClick}/>
                 
             </Map>
