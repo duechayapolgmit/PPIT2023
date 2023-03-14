@@ -12,11 +12,11 @@ export class Markers extends React.Component {
         return this.props.markers.map(
             (marker) => {
                 return <Marker
-                    position={{ lat: marker.geometry.coordinates[1], lng: marker.geometry.coordinates[0] }}
-                    name={marker.properties.NAME}
-                    type={marker.properties.TYPE}
-                    occupied={0}
-                    full={marker.properties.NO_SPACES}
+                    position={{ lat: marker.latitude, lng: marker.longitude }}
+                    name={marker.markerName}
+                    type={marker.type}
+                    occupied={marker.occupied}
+                    full={marker.full}
                     map={map}
                     google={google}
                 	onClick={this.props.onMarkerClick}

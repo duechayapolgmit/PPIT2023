@@ -27,32 +27,39 @@ class MarkersList extends React.Component {
 }
 
 class MarkerInfo extends React.Component {
+    // Get capacity HTML. Will not show if capacity is 0.
+    getCapacity(occupy, capacity) {
+        if (capacity == 0) return;
+        else return <span><br/>Capacity: {occupy} / {capacity}</span>;
+    }
+
     render(){
         // handles distance formatting
         let distance = 0;
         if (this.props.marker.distance != undefined) distance = this.props.marker.distance.toFixed(2);
         
         // handles capacity formatting
-        let capacity = 0;
-        if (this.props.marker.properties.NO_SPACES != "") capacity = this.props.marker.properties.NO_SPACES;
+        let capacity = this.getCapacity(this.props.marker.occupied, this.props.marker.full);
         
         var origin = this.props.lat + "," + this.props.lon;
 
         //handles destination formatting
-        let destination = 0;
-        if (this.props.marker.geometry.coordinates[0] != "") destination = this.props.marker.geometry.coordinates;
+        let longitude = 0;
+        let latitude = 0;
+        if (this.props.marker.longitude != "") {
+            longitude = this.props.marker.longitude;
+            latitude = this.props.marker.latitude;
+        }
 
         //generate URL for directions
-        var longitude = destination[0];
-        var latitude = destination[1];
         var url = `https://www.google.com/maps/dir/?api=1&origin=${origin}&destination=${latitude},${longitude}`;
 
         return (
             <div>
                 <div className="list-markers-single">
                     <div className="list-markers-image"><img src={markerImage}/>{distance}km</div>
-                    <p>{this.props.marker.properties.NAME}<br/>Capacity: 0 / {capacity}<br/>{this.props.marker.properties.TYPE}</p>
-                    <a href={url}><img src={directionsImage}/></a>
+                    <p>{this.props.marker.markerName}{capacity}<br/>{this.props.marker.type}</p>
+                    <div className="list-buttons-image"><a href={url}><img src={directionsImage}/></a></div>
                 </div>
                 <hr/>
             </div>
