@@ -30,11 +30,32 @@ export class Main extends React.Component {
         fetch('https://services-eu1.arcgis.com/Zmea819kt4Uu8kML/arcgis/rest/services/CarParkingOpenData/FeatureServer/0/query?outFields=*&where=1%3D1&f=geojson')
             .then((response) => response.json())
             .then((responseJson) => {
-                this.setState({ markers: responseJson.features })
+                console.log(responseJson.features)
+                let markersList = this.setData(responseJson.features)
+                console.log(markersList)
+                this.setState({ markers: markersList})
             })
             .catch((error) => {
                 console.error(error);
             });
+    }
+
+    setData(markersArray) {
+        let finalArray = [];
+        markersArray.forEach(element => {
+            let tempElement = {
+                markerName: "", latitude: 0, longitude: 0, type: "", occupied: 0, full: 0
+            }
+            tempElement.markerName = element.properties.NAME;
+            tempElement.longitude = element.geometry.coordinates[0]
+            tempElement.latitude = element.geometry.coordinates[1]
+            tempElement.type = element.properties.TYPE;
+            tempElement.full = element.properties.NO_SPACES;
+            if (tempElement.full == "") tempElement.full = 0;
+            tempElement.occupied = Math.round(Math.random()*tempElement.full);
+            finalArray.push(tempElement);
+        });
+        return finalArray;
     }
 
     onMarkerClick = (props, marker, e) => {
