@@ -15,6 +15,7 @@ export class Markers extends React.Component {
                     position={{ lat: marker.geometry.coordinates[1], lng: marker.geometry.coordinates[0] }}
                     name={marker.properties.NAME}
                     type={marker.properties.TYPE}
+                    id={marker.id}
                     occupied={0}
                     full={marker.properties.NO_SPACES}
                     map={map}

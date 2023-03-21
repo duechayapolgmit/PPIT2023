@@ -19,12 +19,13 @@ export class Main extends React.Component {
         activeMarker: {},
         latitude: 0,
         longitude: 0,
-        markers: []
+        markers: [],
+        favourites: [1, 2]
     }
 
     componentDidMount() {
         navigator.geolocation.getCurrentPosition(pos => {
-            this.setState({ latitude: pos.coords.latitude, longitude: pos.coords.longitude})
+            this.setState({ latitude: pos.coords.latitude, longitude: pos.coords.longitude })
         })
 
         fetch('https://services-eu1.arcgis.com/Zmea819kt4Uu8kML/arcgis/rest/services/CarParkingOpenData/FeatureServer/0/query?outFields=*&where=1%3D1&f=geojson')
@@ -35,14 +36,35 @@ export class Main extends React.Component {
             .catch((error) => {
                 console.error(error);
             });
+
+        //retrieve favourites from local storage
+        var favourites = localStorage.getItem('favourites');
+        if (favourites) { //if favourites is not empty
+            favourites = JSON.parse(favourites)
+            this.setState({ favourites: favourites });
+        }
     }
 
     onMarkerClick = (props, marker, e) => {
         this.setState({
             selectedPlace: props,
             activeMarker: marker,
-            showingInfoWindow: true});
+            showingInfoWindow: true
+        });
+    }
+
+    onFavouritesClick = (marker) => {
+        console.log("handle favourites")
+        let favourites = [1, 2];
+        if(favourites.includes(marker.id)){
+            favourites = favourites.filter(id => id !== marker.id); 
+        }else{
+            favourites.push(marker.id);
         }
+        localStorage.setItem("favourites", JSON.stringify(favourites)); 
+        //this.setState({favourites: favourites});
+        console.log(localStorage);
+    }
 
     onFindButtonClick = (markers) => {
         this.setState({
@@ -64,22 +86,24 @@ export class Main extends React.Component {
                 google={this.props.google}
                 zoom={14}
                 style={mapStyles}
-                initialCenter={{lat: 53.27427890260826, lng: -9.049029548763558}}
-                center= {{ lat: this.state.latitude, lng: this.state.longitude }}
+                initialCenter={{ lat: 53.27427890260826, lng: -9.049029548763558 }}
+                center={{ lat: this.state.latitude, lng: this.state.longitude }}
                 streetViewControl={false}
                 mapTypeControl={false}
             >
-                <Marker title={'Current Location'} name={'Current Location'} occupied={0} full={0} type={""} position={{ lat: this.state.latitude, lng: this.state.longitude }} 
-                        onClick={this.onMarkerClick}>
+                <Marker title={'Current Location'} name={'Current Location'} occupied={0} full={0} type={""} position={{ lat: this.state.latitude, lng: this.state.longitude }}
+                    onClick={this.onMarkerClick}>
                 </Marker>
 
-                <Markers markers={this.state.markers} onMarkerClick={this.onMarkerClick}/>
-                <InfoWindow  marker={this.state.activeMarker} visible={this.state.showingInfoWindow}>
-                    <InfoCard lat={this.state.latitude} lon={this.state.longitude} space={{occupied:this.state.activeMarker.occupied, full:this.state.activeMarker.full}} type={this.state.activeMarker.type} marker={this.state.selectedPlace}/>
+                <Markers markers={this.state.markers} onMarkerClick={this.onMarkerClick} />
+                <InfoWindow marker={this.state.activeMarker} visible={this.state.showingInfoWindow}>
+                    <InfoCard favourites={this.state.favourites} lat={this.state.latitude} lon={this.state.longitude} 
+                    space={{ occupied: this.state.activeMarker.occupied, full: this.state.activeMarker.full }} 
+                    type={this.state.activeMarker.type} marker={this.state.selectedPlace} onFavouritesClick={this.onFavouritesClick} />
                 </InfoWindow>
-                <MarkersSidebar markers={this.state.markers} lat = {this.state.latitude} lon = {this.state.longitude}/>
-                <FindButton lat={this.state.latitude} lng={this.state.longitude} markers={this.state.markers} onFindButtonClick={this.onFindButtonClick}/>
-                
+                <MarkersSidebar markers={this.state.markers} lat={this.state.latitude} lon={this.state.longitude} />
+                <FindButton lat={this.state.latitude} lng={this.state.longitude} markers={this.state.markers} onFindButtonClick={this.onFindButtonClick} />
+
             </Map>
         )
 

@@ -45,14 +45,14 @@ class MarkerInfo extends React.Component {
         //generate URL for directions
         var longitude = destination[0];
         var latitude = destination[1];
-        var url = `https://www.google.com/maps/dir/?api=1&origin=${origin}&destination=${latitude},${longitude}`;
+        var directionsURL = `https://www.google.com/maps/dir/?api=1&origin=${origin}&destination=${latitude},${longitude}`;
 
         return (
             <div>
                 <div className="list-markers-single">
                     <div className="list-markers-image"><img src={markerImage}/>{distance}km</div>
                     <p>{this.props.marker.properties.NAME}<br/>Capacity: 0 / {capacity}<br/>{this.props.marker.properties.TYPE}</p>
-                    <a href={url}><img src={directionsImage}/></a>
+                    <a href={directionsURL}><img src={directionsImage}/></a>
                 </div>
                 <hr/>
             </div>
