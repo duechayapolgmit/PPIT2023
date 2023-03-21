@@ -25,6 +25,11 @@ code {
   z-index: 105;
 }
 
+.menu {
+  position: relative;
+  z-index: 110;
+}
+
 .find-button {
   position: relative;
   top:90%;
@@ -45,8 +50,68 @@ code {
   overflow-y: scroll;
 }
 
+.menu-overlay {
+  position: relative;
+  display: flex;
+  text-align: left;
+  top: 2%;
+  left: 2%;
+  width: 20%;
+  height:8%;
+  overflow-y: hidden;
+}
+
+.menu-overlay-image {
+  display: inline-block;
+  height: 100%;
+  vertical-align: middle;
+  width: 20%;
+  overflow: hidden;
+  margin-right: 2%;
+  cursor:pointer;
+}
+
+.menu-overlay-image > img {
+  max-height: 100%;
+  max-width: 100%;
+  width: auto;
+  height: auto;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  margin: auto;
+}
+
+.menu-overlay-list {
+  position: absolute;
+  width:20%;
+  height:100%;
+  text-align: left;
+  top:0;
+  visibility:hidden;
+}
+
+.menu-overlay-list-single {
+  margin-left: 5%;
+  margin-bottom: 7%;
+}
+
+.menu-overlay-list-image {
+  max-height: 100%;
+  max-width: 15%;
+  width: auto;
+  height: auto;
+  top: 0;
+  bottom: 0;
+  margin-top:2%;
+  margin-left: auto; 
+  margin-right: 5%;
+  cursor:pointer;
+}
+
 .menu-show {
   visibility:visible;
+  overflow: hidden;
 }
 
 .list-markers-single {
