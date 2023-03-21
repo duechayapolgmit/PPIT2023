@@ -1,17 +1,24 @@
 import React, { useState, useEffect } from "react"
 import markerImage from '../Images/location_icon.png';
 import directionsImage from '../Images/directions.png';
+import closeIcon from '../Images/close_icon.png';
 
 export default function MarkersSidebar(props){
 
     const [markers, setMarkers] = useState(props.markers);
 
+    console.log(props)
+
+    let closeList = () => {
+        document.getElementById("markers-list-menu").classList.remove("menu-show")
+    }
 
     useEffect( () => {
         setMarkers(props.markers);
     },[props.markers])
     return (
         <div id="markers-list-menu" className="overlay list-markers bg-teal-500">
+            <div className="markers-list-image" onClick={() => closeList()}><img src={closeIcon}/></div>
             <h1 className="text-lg">List of Markers</h1><hr/>
             <MarkersList markers={markers} lat={props.lat} lon={props.lon}/>
         </div>
@@ -33,14 +40,39 @@ class MarkerInfo extends React.Component {
         else return <span><br/>Capacity: {occupy} / {capacity}</span>;
     }
 
+    // Get percent with div
+    getPercent(name, occupy, full) {
+        if (name === "Current Location" || full == 0) return;
+        let percentage = this.getPercentage(occupy, full).toFixed(0);
+        let bgColour = this.getPercentageColour(percentage);
+        return <span className={`${bgColour} pl-4 pr-4`}>{percentage + "%"}</span>
+    }
+
+    // Get percentage from values parsed in (uses space.empty and space.full values)
+    getPercentage(empty, full) {
+        if (full == 0) return 0;
+        let percent = parseFloat(empty) / parseFloat(full);
+        return percent * 100;
+    }
+
+    // Get the colour for the percentage background
+    getPercentageColour(percent) {
+        // may revisit later
+        if (percent < 25) return "bg-green-500";
+        if (percent < 50) return "bg-yellow-300";
+        if (percent < 75) return "bg-orange-300";
+        return "bg-red-300";
+    }
+
     render(){
+        if (this.props.marker.distance > 5) return "";
+
         // handles distance formatting
         let distance = 0;
         if (this.props.marker.distance != undefined) distance = this.props.marker.distance.toFixed(2);
         
         // handles capacity formatting
         let capacity = this.getCapacity(this.props.marker.occupied, this.props.marker.full);
-        
         var origin = this.props.lat + "," + this.props.lon;
 
         //handles destination formatting
@@ -51,6 +83,9 @@ class MarkerInfo extends React.Component {
             latitude = this.props.marker.latitude;
         }
 
+        // handles percentage handling
+        let percent = this.getPercent(this.props.name, this.props.marker.occupied, this.props.marker.full);
+
         //generate URL for directions
         var url = `https://www.google.com/maps/dir/?api=1&origin=${origin}&destination=${latitude},${longitude}`;
 
@@ -58,7 +93,7 @@ class MarkerInfo extends React.Component {
             <div>
                 <div className="list-markers-single">
                     <div className="list-markers-image"><img src={markerImage}/>{distance}km</div>
-                    <p>{this.props.marker.markerName}{capacity}<br/>{this.props.marker.type}</p>
+                    <p>{percent} <b>{this.props.marker.markerName}</b> {capacity}<br/>{this.props.marker.type}</p>
                     <div className="list-buttons-image"><a href={url}><img src={directionsImage}/></a></div>
                 </div>
                 <hr/>
