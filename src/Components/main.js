@@ -2,7 +2,7 @@ import React from "react";
 import { Map, GoogleApiWrapper, Marker, InfoWindow } from 'google-maps-react';
 import { InfoCard } from "./info";
 import { Markers } from "./markers";
-import FindButton from "./find";
+import {FindClosestButton, FindSpaceButton} from "./find";
 import MarkersSidebar from "./listMarkers";
 import Menu, { MenuList } from "./menu";
 
@@ -99,6 +99,7 @@ export class Main extends React.Component {
     onMenuCloseButtonClick = () => {
         document.getElementById("menu-overlay-list").classList.remove("menu-show");
     }
+
     render() {
         const mapStyles = {
             width: '100%',
@@ -113,8 +114,7 @@ export class Main extends React.Component {
                 style={mapStyles}
                 initialCenter={{lat: 53.27427890260826, lng: -9.049029548763558}}
                 center= {{ lat: this.state.latitude, lng: this.state.longitude }}
-                streetViewControl={false}
-                mapTypeControl={false}
+                streetViewControl={false} mapTypeControl={false} fullscreenControl={false}
             >
                 <Marker title={'Current Location'} name={'Current Location'} occupied={0} full={0} type={""} position={{ lat: this.state.latitude, lng: this.state.longitude }} 
                         onClick={this.onMarkerClick}>
@@ -125,7 +125,7 @@ export class Main extends React.Component {
                     <InfoCard lat={this.state.latitude} lon={this.state.longitude} space={{occupied:this.state.activeMarker.occupied, full:this.state.activeMarker.full}} type={this.state.activeMarker.type} marker={this.state.selectedPlace}/>
                 </InfoWindow>
                 <MarkersSidebar markers={this.state.markers} lat = {this.state.latitude} lon = {this.state.longitude}/>
-                <FindButton lat={this.state.latitude} lng={this.state.longitude} markers={this.state.markers} onFindButtonClick={this.onFindButtonClick}/>
+                <FindClosestButton lat={this.state.latitude} lng={this.state.longitude} markers={this.state.markers} onFindButtonClick={this.onFindButtonClick}/>
                 <Menu currentLocation={this.state.currentLocationName} onClickMenuButton={this.onMenuButtonClick}/>
                 <MenuList onClickMenuCloseButton={this.onMenuCloseButtonClick}/>
             </Map>

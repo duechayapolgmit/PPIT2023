@@ -1,6 +1,6 @@
 import React from "react"
 
-export default class FindButton extends React.Component {
+export class FindClosestButton extends React.Component {
 
     getNearestSpace(lat, lng, markers) 
     {
@@ -19,6 +19,7 @@ export default class FindButton extends React.Component {
         });
 
         markers.sort( (a,b) => a.distance - b.distance);
+
         this.props.onFindButtonClick(markers);
     }
 
@@ -35,8 +36,8 @@ export default class FindButton extends React.Component {
         }
 
         return (
-        <div className="container overlay find-button text-2xl bg-teal-500" onClick={() => this.getNearestSpace(lat, lng, markers)}>
-            Find
+        <div className="container find-button text-2xl bg-teal-500" onClick={() => this.getNearestSpace(lat, lng, markers)}>
+            Find Closest
         </div>)
     }
 }

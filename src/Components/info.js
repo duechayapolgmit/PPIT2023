@@ -13,7 +13,7 @@ export class InfoCard extends React.Component {
 
     // Get percentage from values parsed in (uses space.empty and space.full values)
     getPercentage(empty, full) {
-        if (this.props.space.full == 0) return 0;
+        if (full == 0) return 0;
         let percent = parseFloat(empty) / parseFloat(full);
         return percent * 100;
     }

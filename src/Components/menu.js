@@ -1,7 +1,7 @@
 import React from "react";
 import markerImage from '../Images/location_icon.png';
 import menuIcon from '../Images/menu_icon.png';
-import closeIcon from '../Images/close_icon.png'
+import closeIcon from '../Images/close_icon.png';
 
 export default class Menu extends React.Component {
 
