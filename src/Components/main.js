@@ -4,6 +4,7 @@ import { InfoCard } from "./info";
 import { Markers } from "./markers";
 import FindButton from "./find";
 import MarkersSidebar from "./listMarkers";
+import Menu, { MenuList } from "./menu";
 
 
 export class Main extends React.Component {
@@ -19,15 +20,21 @@ export class Main extends React.Component {
         activeMarker: {},
         latitude: 0,
         longitude: 0,
+        currentLocationName: "",
         markers: []
     }
 
-    componentDidMount() {
+    async componentDidMount() {
+        let latitude, longitude;
+
+        // Get current location via geolocation services from JS
         navigator.geolocation.getCurrentPosition(pos => {
-            this.setState({ latitude: pos.coords.latitude, longitude: pos.coords.longitude})
+            latitude = pos.coords.latitude;
+            longitude = pos.coords.longitude;
+            this.setState({ latitude: latitude, longitude: longitude})
         })
 
-        fetch('https://services-eu1.arcgis.com/Zmea819kt4Uu8kML/arcgis/rest/services/CarParkingOpenData/FeatureServer/0/query?outFields=*&where=1%3D1&f=geojson')
+        await fetch('https://services-eu1.arcgis.com/Zmea819kt4Uu8kML/arcgis/rest/services/CarParkingOpenData/FeatureServer/0/query?outFields=*&where=1%3D1&f=geojson')
             .then((response) => response.json())
             .then((responseJson) => {
                 console.log(responseJson.features)
@@ -35,8 +42,19 @@ export class Main extends React.Component {
                 console.log(markersList)
                 this.setState({ markers: markersList})
             })
+            .then(() => {
+                
+            })
             .catch((error) => {
                 console.error(error);
+            });
+        
+        // Get information from current location
+        await fetch(`https://maps.googleapis.com/maps/api/geocode/json?latlng=${latitude},${longitude}&key=${process.env.REACT_APP_GOOGLE_API_KEY}`)
+            .then(res => res.json())
+            .then(resJson => {
+                this.setState({currentLocationName: resJson.results[0].address_components[0].short_name});
+                console.log(resJson.results[0].address_components[0].short_name)
             });
     }
 
@@ -73,6 +91,14 @@ export class Main extends React.Component {
         console.log(markers);
     }
 
+    onMenuButtonClick = () => {
+        document.getElementById("menu-overlay-list").classList.add("menu-show")
+        console.log('click now')
+    }
+
+    onMenuCloseButtonClick = () => {
+        document.getElementById("menu-overlay-list").classList.remove("menu-show");
+    }
     render() {
         const mapStyles = {
             width: '100%',
@@ -100,7 +126,8 @@ export class Main extends React.Component {
                 </InfoWindow>
                 <MarkersSidebar markers={this.state.markers} lat = {this.state.latitude} lon = {this.state.longitude}/>
                 <FindButton lat={this.state.latitude} lng={this.state.longitude} markers={this.state.markers} onFindButtonClick={this.onFindButtonClick}/>
-                
+                <Menu currentLocation={this.state.currentLocationName} onClickMenuButton={this.onMenuButtonClick}/>
+                <MenuList onClickMenuCloseButton={this.onMenuCloseButtonClick}/>
             </Map>
         )
 
