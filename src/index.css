@@ -25,41 +25,242 @@ code {
   z-index: 105;
 }
 
-.find-button {
-  position: relative;
-  top:90%;
-  left:45%;
-  width: 10%;
-  cursor:pointer;
-}
-
-.list-markers {
-  position: absolute;
-  width:20%;
-  height:100%;
-  text-align: left;
-  padding:1%;
-  top:0;
-  left:80%;
-  visibility:hidden;
-  overflow-y: scroll;
-}
-
-.menu-show {
-  visibility:visible;
-}
-
-.list-markers-single {
-  display:flex
-}
-
-.list-markers-image {
-  width:20%;
-  margin-right:2%;
-  text-align: center;
+.image-clickable {
+  cursor: pointer;
 }
 
 hr {
-  margin-top:3%;
-  margin-bottom:3%;
+  margin-top:1em;
+  margin-bottom:1em;
 }
+
+/* MOBILE */
+@media screen and (max-width: 1180px) {
+   /* MENU RELATED */
+  .menu-overlay {
+    position: relative;
+    display: flex;
+    text-align: left;
+    top: 0;
+    left: 0;
+    height:auto;
+    overflow-y: hidden;
+  }
+
+  .menu-overlay-image {
+    display: inline-block;
+    height: 100%;
+    vertical-align: middle;
+    width: 20%;
+    overflow: hidden;
+    margin-right: 2%;
+    cursor:pointer;
+  }
+  
+  .menu-overlay > img {
+    width: 3.5em;
+    height: 3.5em;
+  }
+
+  /* FIND BUTTON */
+  .find-button {
+    position: relative;
+    top:85%;
+    left:40%;
+    width: 20%;
+    cursor:pointer;
+  }
+
+  /* MARKERS' LIST */
+  .markers-list {
+    position: absolute;
+    width:100%;
+    height:35%;
+    text-align: left;
+    padding:1em;
+    top:65%;
+    visibility:hidden;
+    overflow-y: scroll;
+  }
+
+  .markers-list-header {
+    display: flex;
+    width: 100%;
+    height: 2em;
+  }
+
+  .markers-list-header > img{
+    width: auto;
+  }
+
+  .markers-list-heading {
+    width: 95%;
+  }
+
+  /* MARKERS' LIST - SINGLE ITEM */
+  .markers-list-single {
+    display:flex
+  }
+
+  .markers-list-image-marker {
+    width: 4.5em;
+    text-align: center;
+    margin-right: 1em;
+  }
+
+  .markers-list-single-details {
+    width: 80%;
+  }
+  
+  .markers-list-button-directions {
+    width: 4.5em;
+    margin-left: 1em;
+  }
+  
+  .menu-overlay-list {
+    position: absolute;
+    width:100%;
+    height:100%;
+    text-align: left;
+    padding:1em;
+    top:65%;
+    visibility:hidden;
+    overflow-y: scroll;
+  }
+  
+  .menu-overlay-list-single {
+    margin-left: 5%;
+    margin-bottom: 1em;
+  }
+  
+  .menu-overlay-list-image {
+    max-height: 2em;
+    max-width: 2em;
+    width: auto;
+    height: auto;
+    top: 0;
+    bottom: 0;
+    margin-top:2%;
+    margin-left: auto; 
+    margin-right: 5%;
+    cursor:pointer;
+  }
+  
+  .menu-show {
+    visibility:visible;
+    overflow: scroll;
+  }
+
+}
+
+/* DESKTOP */
+@media screen and (min-width: 1181px) {
+  /* MENU RELATED */
+  .menu-overlay {
+    position: relative;
+    display: flex;
+    text-align: left;
+    vertical-align: middle;
+    top: 4%;
+    left: 2%;
+    width:fit-content;
+    padding-right: 2%;
+    height:7%;
+    overflow-y: hidden;
+  }
+
+  .menu-overlay-details {
+    display: inline-block;
+  }
+
+  /* FIND BUTTON */
+  .find-button {
+    position: relative;
+    top:85%;
+    left:45%;
+    width: 15%;
+    cursor:pointer;
+  }
+
+  /* MARKERS' LIST */
+  .markers-list {
+    position: absolute;
+    width:25%;
+    height:100%;
+    text-align: left;
+    padding:1em;
+    top:0;
+    left:75%;
+    visibility:hidden;
+    overflow: scroll;
+  }
+
+  .markers-list-header {
+    display: flex;
+    width: 100%;
+    height: 4%;
+  }
+
+  .markers-list-header > img{
+    width: auto;
+  }
+
+  .markers-list-heading {
+    width: 90%;
+  }
+
+  /* MARKERS' LIST - SINGLE ITEM */
+  .markers-list-single {
+    display:flex
+  }
+
+  .markers-list-image-marker {
+    text-align: center;
+    width: 4.5em;
+    margin-right: 1em;
+  }
+
+  .markers-list-single-details {
+    width: 75%;
+  }
+  
+  .markers-list-button-directions {
+    width: 4.5em;
+    margin-left: 1em;
+  }
+  
+  .menu-overlay-list {
+    position: absolute;
+    width:20%;
+    height:100%;
+    text-align: left;
+    top:0;
+    visibility:hidden;
+  }
+  
+  .menu-overlay-list-single {
+    margin-left: 5%;
+    margin-bottom: 7%;
+  }
+  
+  .menu-overlay-list-image {
+    max-height: 100%;
+    max-width: 15%;
+    width: auto;
+    height: auto;
+    top: 0;
+    bottom: 0;
+    margin-top:2%;
+    margin-left: auto; 
+    margin-right: 5%;
+    cursor:pointer;
+  }
+  
+  .menu-show {
+    visibility:visible;
+    overflow: scroll;
+  }
+  
+}
+
+

@@ -37,7 +37,7 @@ export default class FindButton extends React.Component {
         }
 
         return (
-        <div className="container overlay find-button text-2xl bg-teal-500" onClick={() => this.getNearestSpace(lat, lng, markers)}>
+        <div className="container find-button text-2xl bg-teal-500" onClick={() => this.getNearestSpace(lat, lng, markers)}>
             Find
         </div>)
     }
