@@ -1,11 +1,13 @@
 import React from "react"
 
-export class FindClosestButton extends React.Component {
+export default class FindButton extends React.Component {
 
     getNearestSpace(lat, lng, markers) 
     {
+
+
         markers.forEach(marker => {
-            let coords = [marker.longitude, marker.latitude]
+            let coords = marker.geometry.coordinates
             var R = 6371; // in kilometers
             var dLat = this.toRad(coords[1]-lat);
             var dLon = this.toRad(coords[0]-lng);
@@ -19,7 +21,6 @@ export class FindClosestButton extends React.Component {
         });
 
         markers.sort( (a,b) => a.distance - b.distance);
-
         this.props.onFindButtonClick(markers);
     }
 

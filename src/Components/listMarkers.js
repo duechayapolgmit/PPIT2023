@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react"
 import markerImage from '../Images/location_icon.png';
 import directionsImage from '../Images/directions.png';
-import closeIcon from '../Images/close_icon.png';
 
 export default function MarkersSidebar(props){
 
@@ -35,57 +34,20 @@ class MarkersList extends React.Component {
 }
 
 class MarkerInfo extends React.Component {
-    // Get capacity HTML. Will not show if capacity is 0.
-    getCapacity(occupy, capacity) {
-        if (capacity == 0) return;
-        else return <span><br/>Capacity: {occupy} / {capacity}</span>;
-    }
-
-    // Get percent with div
-    getPercent(name, occupy, full) {
-        if (name === "Current Location" || full == 0) return;
-        let percentage = this.getPercentage(occupy, full).toFixed(0);
-        let bgColour = this.getPercentageColour(percentage);
-        return <span className={`${bgColour} pl-4 pr-4`}>{percentage + "%"}</span>
-    }
-
-    // Get percentage from values parsed in (uses space.empty and space.full values)
-    getPercentage(empty, full) {
-        if (full == 0) return 0;
-        let percent = parseFloat(empty) / parseFloat(full);
-        return percent * 100;
-    }
-
-    // Get the colour for the percentage background
-    getPercentageColour(percent) {
-        // may revisit later
-        if (percent < 25) return "bg-green-500";
-        if (percent < 50) return "bg-yellow-300";
-        if (percent < 75) return "bg-orange-300";
-        return "bg-red-300";
-    }
-
     render(){
-        if (this.props.marker.distance > 5) return "";
-
         // handles distance formatting
         let distance = 0;
         if (this.props.marker.distance != undefined) distance = this.props.marker.distance.toFixed(2);
         
         // handles capacity formatting
-        let capacity = this.getCapacity(this.props.marker.occupied, this.props.marker.full);
+        let capacity = 0;
+        if (this.props.marker.properties.NO_SPACES != "") capacity = this.props.marker.properties.NO_SPACES;
+        
         var origin = this.props.lat + "," + this.props.lon;
 
         //handles destination formatting
-        let longitude = 0;
-        let latitude = 0;
-        if (this.props.marker.longitude != "") {
-            longitude = this.props.marker.longitude;
-            latitude = this.props.marker.latitude;
-        }
-
-        // handles percentage handling
-        let percent = this.getPercent(this.props.name, this.props.marker.occupied, this.props.marker.full);
+        let destination = 0;
+        if (this.props.marker.geometry.coordinates[0] != "") destination = this.props.marker.geometry.coordinates;
 
         //generate URL for directions
         var longitude = destination[0];

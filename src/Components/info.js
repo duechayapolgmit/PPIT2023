@@ -5,7 +5,7 @@ export class InfoCard extends React.Component {
 
     // Get percent HTML. Will not show if capacity is 0.
     getPercent(name, occupy, full) {
-        if (name === "Current Location" || full == 0) return;
+        if (name === "Current Location" || full === 0) return;
         let percentage = this.getPercentage(occupy, full).toFixed(0);
         let bgColour = this.getPercentageColour(percentage);
         return <span className={`${bgColour} pl-4 pr-4`}>{percentage + "%"}</span>
@@ -13,7 +13,7 @@ export class InfoCard extends React.Component {
 
     // Get percentage from values parsed in (uses space.empty and space.full values)
     getPercentage(empty, full) {
-        if (full == 0) return 0;
+        if (this.props.space.full === 0) return 0;
         let percent = parseFloat(empty) / parseFloat(full);
         return percent * 100;
     }
@@ -29,7 +29,7 @@ export class InfoCard extends React.Component {
 
     // Get capacity HTML. Will not show if capacity is 0.
     getCapacity(occupy, capacity) {
-        if (capacity == 0) return;
+        if (capacity === 0) return;
         else return <p>Capacity: {occupy} / {capacity}</p>;
     }
 
@@ -54,13 +54,11 @@ export class InfoCard extends React.Component {
         if(this.props.marker.name == "Current Location")imageStyle = { width: '0px', height: '0px' };
         return (
 
-            <div className="container text-left">
+            <div className="container text-left" id="infoWindow">
                 <h1 className="text-xl font-bold">{percent} {this.props.marker.name}</h1>
                 {capacity}
                 <p>{this.props.type}</p>
                 <a href={directionsURL}><img src={directionsImage} style={imageStyle}/></a>
-                <button onClick={this.props.onFavouritesClick(this.props.marker)}>Favourites</button>
-
             </div>
         )
     }
