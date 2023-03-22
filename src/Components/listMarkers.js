@@ -7,8 +7,6 @@ export default function MarkersSidebar(props){
 
     const [markers, setMarkers] = useState(props.markers);
 
-    console.log(props)
-
     let closeList = () => {
         document.getElementById("markers-list-menu").classList.remove("menu-show")
     }
@@ -17,9 +15,12 @@ export default function MarkersSidebar(props){
         setMarkers(props.markers);
     },[props.markers])
     return (
-        <div id="markers-list-menu" className="overlay list-markers bg-teal-500">
-            <div className="markers-list-image" onClick={() => closeList()}><img src={closeIcon}/></div>
-            <h1 className="text-lg">List of Markers</h1><hr/>
+        <div id="markers-list-menu" className="overlay markers-list bg-teal-500">
+            <div className="markers-list-header">
+                <div className="markers-list-heading"><h1 className="text-xl">List of Markers</h1></div>
+                <img className="image-clickable" src={closeIcon} onClick={() => closeList()}/>
+            </div>
+            <hr/>
             <MarkersList markers={markers} lat={props.lat} lon={props.lon}/>
         </div>
     )
@@ -93,10 +94,10 @@ class MarkerInfo extends React.Component {
 
         return (
             <div>
-                <div className="list-markers-single">
-                    <div className="list-markers-image"><img src={markerImage}/>{distance}km</div>
-                    <p>{this.props.marker.properties.NAME}<br/>Capacity: 0 / {capacity}<br/>{this.props.marker.properties.TYPE}</p>
-                    <a href={directionsURL}><img src={directionsImage}/></a>
+                <div className="markers-list-single">
+                    <div className="markers-list-image-marker"><img src={markerImage}/>{distance}km</div>
+                    <div className="markers-list-single-details"><p>{percent} <b>{this.props.marker.markerName}</b> {capacity}<br/>{this.props.marker.type}</p></div>
+                    <div className="markers-list-button-directions"><a href={url}><img src={directionsImage}/></a></div>
                 </div>
                 <hr/>
             </div>

@@ -29,7 +29,17 @@ export class Main extends React.Component {
 
         // Get current location via geolocation services from JS
         navigator.geolocation.getCurrentPosition(pos => {
-            this.setState({ latitude: pos.coords.latitude, longitude: pos.coords.longitude })
+            latitude = pos.coords.latitude;
+            longitude = pos.coords.longitude;
+            this.setState({ latitude: latitude, longitude: longitude})
+            console.log("nav")
+            // Get information from current location
+            fetch(`https://maps.googleapis.com/maps/api/geocode/json?latlng=${latitude},${longitude}&key=${process.env.REACT_APP_GOOGLE_API_KEY}`)
+                .then(res => res.json())
+                .then(resJson => {
+                    this.setState({currentLocationName: resJson.results[0].formatted_address});
+                    console.log("info")
+            });
         })
 
         await fetch('https://services-eu1.arcgis.com/Zmea819kt4Uu8kML/arcgis/rest/services/CarParkingOpenData/FeatureServer/0/query?outFields=*&where=1%3D1&f=geojson')
@@ -37,8 +47,8 @@ export class Main extends React.Component {
             .then((responseJson) => {
                 console.log(responseJson.features)
                 let markersList = this.setData(responseJson.features)
-                console.log(markersList)
                 this.setState({ markers: markersList})
+                console.log("mark")
             })
             .then(() => {
                 
@@ -110,8 +120,9 @@ export class Main extends React.Component {
                 streetViewControl={false}
                 mapTypeControl={false}
             >
-                <Marker title={'Current Location'} name={'Current Location'} occupied={0} full={0} type={""} position={{ lat: this.state.latitude, lng: this.state.longitude }}
-                    onClick={this.onMarkerClick}>
+                <Menu currentLocation={this.state.currentLocationName} onClickMenuButton={this.onMenuButtonClick}/>
+                <Marker title={'Current Location'} name={'Current Location'} occupied={0} full={0} type={""} position={{ lat: this.state.latitude, lng: this.state.longitude }} 
+                        onClick={this.onMarkerClick}>
                 </Marker>
 
                 <Markers markers={this.state.markers} onMarkerClick={this.onMarkerClick} />
@@ -120,9 +131,10 @@ export class Main extends React.Component {
                     space={{ occupied: this.state.activeMarker.occupied, full: this.state.activeMarker.full }} 
                     type={this.state.activeMarker.type} marker={this.state.selectedPlace} onFavouritesClick={this.onFavouritesClick} />
                 </InfoWindow>
-                <MarkersSidebar markers={this.state.markers} lat={this.state.latitude} lon={this.state.longitude} />
-                <FindButton lat={this.state.latitude} lng={this.state.longitude} markers={this.state.markers} onFindButtonClick={this.onFindButtonClick} />
-
+                <MarkersSidebar markers={this.state.markers} lat = {this.state.latitude} lon = {this.state.longitude}/>
+                <FindClosestButton lat={this.state.latitude} lng={this.state.longitude} markers={this.state.markers} onFindButtonClick={this.onFindButtonClick}/>
+                
+                <MenuList onClickMenuCloseButton={this.onMenuCloseButtonClick}/>
             </Map>
         )
 
