@@ -49,7 +49,7 @@ export class InfoCard extends React.Component {
         let imageStyle = { width: '40px', height: '40px' };
         if(this.props.marker.name == "Current Location")imageStyle = { width: '0px', height: '0px' };
         return (
-            <div className="container text-left">
+            <div className="container text-left" id="infoWindow">
                 <h1 className="text-xl font-bold">{percent} {this.props.marker.name}</h1>
                 {capacity}
                 <p>{this.props.type}</p>
