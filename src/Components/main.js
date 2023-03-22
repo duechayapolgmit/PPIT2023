@@ -108,6 +108,7 @@ export class Main extends React.Component {
     onFavouritesClick = (marker) => {
         console.log("clicked favourites")
         var favourites = JSON.parse(localStorage.getItem('favourites'));
+        if(favourites == null) favourites = []
         if (favourites.includes(marker.id)) {
             favourites = favourites.filter(id => id !== marker.id);
         } else {
@@ -121,6 +122,7 @@ export class Main extends React.Component {
     onInfoWindowOpen(props, e) {
         console.log("info window open")
         var favourites = JSON.parse(localStorage.getItem('favourites'));
+        if(favourites == null) favourites = []
         let button = document.createElement('button');
         let image = document.createElement('img');
         
@@ -141,7 +143,6 @@ export class Main extends React.Component {
         if (this.state.selectedPlace.id != null) {
             infoWindow.appendChild(button);
         }
-        console.log(this.state.selectedPlace)
 
     }
 
