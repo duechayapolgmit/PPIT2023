@@ -25,11 +25,6 @@ code {
   z-index: 105;
 }
 
-.menu {
-  position: relative;
-  z-index: 110;
-}
-
 .image-clickable {
   cursor: pointer;
 }
