@@ -5,7 +5,6 @@ export class Markers extends React.Component {
 
     render() {
         const { google, map } = this.props;
-
         if (!google || !map) {
             return null;
         }
@@ -15,6 +14,7 @@ export class Markers extends React.Component {
                     position={{ lat: marker.latitude, lng: marker.longitude }}
                     name={marker.markerName}
                     type={marker.type}
+                    id={marker.id}
                     occupied={marker.occupied}
                     full={marker.full}
                     map={map}

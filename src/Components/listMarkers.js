@@ -66,7 +66,7 @@ class MarkerInfo extends React.Component {
     }
 
     render(){
-        if (this.props.marker.distance > 5) return "";
+        if (this.props.marker.distance > 40) return "";
 
         // handles distance formatting
         let distance = 0;

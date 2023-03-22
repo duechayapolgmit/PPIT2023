@@ -6,6 +6,9 @@ import {FindClosestButton, FindSpaceButton} from "./find";
 import MarkersSidebar from "./listMarkers";
 import Menu, { MenuList } from "./menu";
 
+import favourite_empty from '../Images/favourite_empty.png';
+import favourite_full from '../Images/favourite_full.png';
+
 
 export class Main extends React.Component {
 
@@ -63,13 +66,14 @@ export class Main extends React.Component {
         let finalArray = [];
         markersArray.forEach(element => {
             let tempElement = {
-                markerName: "", latitude: 0, longitude: 0, type: "", occupied: 0, full: 0
+                markerName: "", latitude: 0, longitude: 0, type: "", occupied: 0, full: 0, id: 0
             }
             tempElement.markerName = element.properties.NAME;
             tempElement.longitude = element.geometry.coordinates[0]
             tempElement.latitude = element.geometry.coordinates[1]
             tempElement.type = element.properties.TYPE;
             tempElement.full = element.properties.NO_SPACES;
+            tempElement.id = element.id;
             if (tempElement.full == "") tempElement.full = 0;
             tempElement.occupied = Math.round(Math.random()*tempElement.full);
             finalArray.push(tempElement);
@@ -101,6 +105,46 @@ export class Main extends React.Component {
         document.getElementById("menu-overlay-list").classList.remove("menu-show");
     }
 
+    onFavouritesClick = (marker) => {
+        console.log("clicked favourites")
+        var favourites = JSON.parse(localStorage.getItem('favourites'));
+        if (favourites.includes(marker.id)) {
+            favourites = favourites.filter(id => id !== marker.id);
+        } else {
+            favourites.push(marker.id);
+        }
+        localStorage.setItem("favourites", JSON.stringify(favourites));
+        this.setState({ favourites: favourites });
+        console.log(localStorage);
+    }
+
+    onInfoWindowOpen(props, e) {
+        console.log("info window open")
+        var favourites = JSON.parse(localStorage.getItem('favourites'));
+        let button = document.createElement('button');
+        let image = document.createElement('img');
+        
+        if (favourites.includes(this.state.selectedPlace.id)) {
+            image.src = favourite_full;
+        } else {
+            image.src = favourite_empty;
+        }
+
+        image.width = "40";
+        image.height = "40";
+
+        button.appendChild(image);
+        button.addEventListener('click', () => {
+            this.onFavouritesClick(this.state.selectedPlace)
+        });
+        const infoWindow = document.getElementById('infoWindow');
+        if (this.state.selectedPlace.id != null) {
+            infoWindow.appendChild(button);
+        }
+        console.log(this.state.selectedPlace)
+
+    }
+
     render() {
         const mapStyles = {
             width: '100%',
@@ -123,7 +167,7 @@ export class Main extends React.Component {
                 </Marker>
 
                 <Markers markers={this.state.markers} onMarkerClick={this.onMarkerClick}/>
-                <InfoWindow  marker={this.state.activeMarker} visible={this.state.showingInfoWindow}>
+                <InfoWindow  marker={this.state.activeMarker} visible={this.state.showingInfoWindow} onOpen={e => { this.onInfoWindowOpen(this.props, e); }}>
                     <InfoCard lat={this.state.latitude} lon={this.state.longitude} space={{occupied:this.state.activeMarker.occupied, full:this.state.activeMarker.full}} type={this.state.activeMarker.type} marker={this.state.selectedPlace}/>
                 </InfoWindow>
                 <MarkersSidebar markers={this.state.markers} lat = {this.state.latitude} lon = {this.state.longitude}/>
