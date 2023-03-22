@@ -87,14 +87,16 @@ class MarkerInfo extends React.Component {
         let percent = this.getPercent(this.props.name, this.props.marker.occupied, this.props.marker.full);
 
         //generate URL for directions
-        var url = `https://www.google.com/maps/dir/?api=1&origin=${origin}&destination=${latitude},${longitude}`;
+        var longitude = destination[0];
+        var latitude = destination[1];
+        var directionsURL = `https://www.google.com/maps/dir/?api=1&origin=${origin}&destination=${latitude},${longitude}`;
 
         return (
             <div>
                 <div className="list-markers-single">
                     <div className="list-markers-image"><img src={markerImage}/>{distance}km</div>
-                    <p>{percent} <b>{this.props.marker.markerName}</b> {capacity}<br/>{this.props.marker.type}</p>
-                    <div className="list-buttons-image"><a href={url}><img src={directionsImage}/></a></div>
+                    <p>{this.props.marker.properties.NAME}<br/>Capacity: 0 / {capacity}<br/>{this.props.marker.properties.TYPE}</p>
+                    <a href={directionsURL}><img src={directionsImage}/></a>
                 </div>
                 <hr/>
             </div>

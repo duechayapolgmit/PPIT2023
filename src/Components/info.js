@@ -33,9 +33,12 @@ export class InfoCard extends React.Component {
         else return <p>Capacity: {occupy} / {capacity}</p>;
     }
 
+
     render() {
         let percent = this.getPercent(this.props.name, this.props.space.occupied, this.props.space.full);
         let capacity = this.getCapacity(this.props.space.occupied, this.props.space.full);
+
+            
 
         var origin = this.props.lat + "," + this.props.lon;
         let destination = 0;
@@ -44,17 +47,20 @@ export class InfoCard extends React.Component {
         //generate URL for directions
         var longitude = destination.lng;
         var latitude = destination.lat;
-        var url = `https://www.google.com/maps/dir/?api=1&origin=${origin}&destination=${latitude},${longitude}`;
+        var directionsURL = `https://www.google.com/maps/dir/?api=1&origin=${origin}&destination=${latitude},${longitude}`;
+
 
         let imageStyle = { width: '40px', height: '40px' };
         if(this.props.marker.name == "Current Location")imageStyle = { width: '0px', height: '0px' };
         return (
+
             <div className="container text-left">
                 <h1 className="text-xl font-bold">{percent} {this.props.marker.name}</h1>
                 {capacity}
                 <p>{this.props.type}</p>
-                <a href={url}><img src={directionsImage} style={imageStyle}/></a>
-                
+                <a href={directionsURL}><img src={directionsImage} style={imageStyle}/></a>
+                <button onClick={this.props.onFavouritesClick(this.props.marker)}>Favourites</button>
+
             </div>
         )
     }
