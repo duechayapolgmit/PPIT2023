@@ -37,7 +37,7 @@ export class FindClosestButton extends React.Component {
 
         return (
         <div className="container find-button text-2xl bg-teal-500" onClick={() => this.getNearestSpace(lat, lng, markers)}>
-            Find Closest
+            Find
         </div>)
     }
 }

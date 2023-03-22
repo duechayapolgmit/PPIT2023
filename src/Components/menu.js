@@ -6,11 +6,10 @@ import closeIcon from '../Images/close_icon.png';
 export default class Menu extends React.Component {
 
     render(){
-        console.log(this.props.currentLocation)
         return (
-            <div className="container overlay menu-overlay bg-teal-500 text-lg">
-                <div className="menu-overlay-image" onClick={() => this.props.onClickMenuButton()}><img src={menuIcon} /></div>
-                <div><b>Current Location</b><br/>{this.props.currentLocation}</div>
+            <div className="overlay menu-overlay bg-teal-500 text-lg">
+                <img className="image-clickable" src={menuIcon} onClick={() => this.props.onClickMenuButton()}/>
+                <div className="menu-overlay-details"><b>Current Location</b><br/>{this.props.currentLocation}</div>
             </div>
         )
     }
