@@ -2,7 +2,7 @@ import React from "react";
 import { Map, GoogleApiWrapper, Marker, InfoWindow } from 'google-maps-react';
 import { InfoCard } from "./info";
 import { Markers } from "./markers";
-import {FindClosestButton, FindSpaceButton} from "./find";
+import { FindClosestButton, FindSpaceButton } from "./find";
 import MarkersSidebar from "./listMarkers";
 import Menu, { MenuList } from "./menu";
 
@@ -34,15 +34,15 @@ export class Main extends React.Component {
         navigator.geolocation.getCurrentPosition(pos => {
             latitude = pos.coords.latitude;
             longitude = pos.coords.longitude;
-            this.setState({ latitude: latitude, longitude: longitude})
+            this.setState({ latitude: latitude, longitude: longitude })
             console.log("nav")
             // Get information from current location
             fetch(`https://maps.googleapis.com/maps/api/geocode/json?latlng=${latitude},${longitude}&key=${process.env.REACT_APP_GOOGLE_API_KEY}`)
                 .then(res => res.json())
                 .then(resJson => {
-                    this.setState({currentLocationName: resJson.results[0].formatted_address});
+                    this.setState({ currentLocationName: resJson.results[0].formatted_address });
                     console.log("info")
-            });
+                });
         })
 
         await fetch('https://services-eu1.arcgis.com/Zmea819kt4Uu8kML/arcgis/rest/services/CarParkingOpenData/FeatureServer/0/query?outFields=*&where=1%3D1&f=geojson')
@@ -50,11 +50,11 @@ export class Main extends React.Component {
             .then((responseJson) => {
                 console.log(responseJson.features)
                 let markersList = this.setData(responseJson.features)
-                this.setState({ markers: markersList})
+                this.setState({ markers: markersList })
                 console.log("mark")
             })
             .then(() => {
-                
+
             })
             .catch((error) => {
                 console.error(error);
@@ -75,7 +75,7 @@ export class Main extends React.Component {
             tempElement.full = element.properties.NO_SPACES;
             tempElement.id = element.id;
             if (tempElement.full == "") tempElement.full = 0;
-            tempElement.occupied = Math.round(Math.random()*tempElement.full);
+            tempElement.occupied = Math.round(Math.random() * tempElement.full);
             finalArray.push(tempElement);
         });
         return finalArray;
@@ -85,8 +85,9 @@ export class Main extends React.Component {
         this.setState({
             selectedPlace: props,
             activeMarker: marker,
-            showingInfoWindow: true});
-        }
+            showingInfoWindow: true
+        });
+    }
 
     onFindButtonClick = (markers) => {
         this.setState({
@@ -105,10 +106,14 @@ export class Main extends React.Component {
         document.getElementById("menu-overlay-list").classList.remove("menu-show");
     }
 
+    shouldComponentUpdate(nextProps) {
+        return true;
+    }
+
     onFavouritesClick = (marker) => {
         console.log("clicked favourites")
         var favourites = JSON.parse(localStorage.getItem('favourites'));
-        if(favourites == null) favourites = []
+        if (favourites == null) favourites = []
         if (favourites.includes(marker.id)) {
             favourites = favourites.filter(id => id !== marker.id);
         } else {
@@ -122,10 +127,10 @@ export class Main extends React.Component {
     onInfoWindowOpen(props, e) {
         console.log("info window open")
         var favourites = JSON.parse(localStorage.getItem('favourites'));
-        if(favourites == null) favourites = []
+        if (favourites == null) favourites = []
         let button = document.createElement('button');
         let image = document.createElement('img');
-        
+
         if (favourites.includes(this.state.selectedPlace.id)) {
             image.src = favourite_full;
         } else {
@@ -152,29 +157,40 @@ export class Main extends React.Component {
             height: '100%',
         };
         // Use z-index CSS for overlays - set it higher than 100
+
+        //controlling the center of the screen so the user
+        //doesn't go back to their current location each time they
+        //click on a marker
+        var center;
+        if (this.state.selectedPlace.position === undefined){
+            center = { lat: this.state.latitude, lng: this.state.longitude };
+        }else{
+            center = { lat: this.state.selectedPlace.position.lat, lng: this.state.selectedPlace.position.lng };
+        }
+
         return (
             <Map
                 className="background"
                 google={this.props.google}
                 zoom={14}
                 style={mapStyles}
-                initialCenter={{lat: 53.27427890260826, lng: -9.049029548763558}}
-                center= {{ lat: this.state.latitude, lng: this.state.longitude }}
+                initialCenter={{ lat: 53.27427890260826, lng: -9.049029548763558 }}
+                center={center}
                 streetViewControl={false} mapTypeControl={false} fullscreenControl={false}
             >
-                <Menu currentLocation={this.state.currentLocationName} onClickMenuButton={this.onMenuButtonClick}/>
-                <Marker title={'Current Location'} name={'Current Location'} occupied={0} full={0} type={""} position={{ lat: this.state.latitude, lng: this.state.longitude }} 
-                        onClick={this.onMarkerClick}>
+                <Menu currentLocation={this.state.currentLocationName} onClickMenuButton={this.onMenuButtonClick} />
+                <Marker title={'Current Location'} name={'Current Location'} occupied={0} full={0} type={""} position={{ lat: this.state.latitude, lng: this.state.longitude }}
+                    onClick={this.onMarkerClick}>
                 </Marker>
 
-                <Markers markers={this.state.markers} onMarkerClick={this.onMarkerClick}/>
-                <InfoWindow  marker={this.state.activeMarker} visible={this.state.showingInfoWindow} onOpen={e => { this.onInfoWindowOpen(this.props, e); }}>
-                    <InfoCard lat={this.state.latitude} lon={this.state.longitude} space={{occupied:this.state.activeMarker.occupied, full:this.state.activeMarker.full}} type={this.state.activeMarker.type} marker={this.state.selectedPlace}/>
+                <Markers markers={this.state.markers} onMarkerClick={this.onMarkerClick} />
+                <InfoWindow marker={this.state.activeMarker} visible={this.state.showingInfoWindow} onOpen={e => { this.onInfoWindowOpen(this.props, e); }}>
+                    <InfoCard lat={this.state.latitude} lon={this.state.longitude} space={{ occupied: this.state.activeMarker.occupied, full: this.state.activeMarker.full }} type={this.state.activeMarker.type} marker={this.state.selectedPlace} />
                 </InfoWindow>
-                <MarkersSidebar markers={this.state.markers} lat = {this.state.latitude} lon = {this.state.longitude}/>
-                <FindClosestButton lat={this.state.latitude} lng={this.state.longitude} markers={this.state.markers} onFindButtonClick={this.onFindButtonClick}/>
-                
-                <MenuList onClickMenuCloseButton={this.onMenuCloseButtonClick}/>
+                <MarkersSidebar markers={this.state.markers} lat={this.state.latitude} lon={this.state.longitude} />
+                <FindClosestButton lat={this.state.latitude} lng={this.state.longitude} markers={this.state.markers} onFindButtonClick={this.onFindButtonClick} />
+
+                <MenuList onClickMenuCloseButton={this.onMenuCloseButtonClick} />
             </Map>
         )
 
