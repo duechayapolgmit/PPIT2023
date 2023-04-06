@@ -24,11 +24,15 @@ export class Main extends React.Component {
         latitude: 0,
         longitude: 0,
         currentLocationName: "",
-        markers: []
+        markers: [],
+        notify: true
     }
 
     async componentDidMount() {
+        if (!("Notification" in window)) console.log("This browser does not support notifications")
+        else Notification.requestPermission(); // request notification
         let latitude, longitude;
+        
 
         // Get current location via geolocation services from JS
         navigator.geolocation.getCurrentPosition(pos => {
@@ -45,24 +49,25 @@ export class Main extends React.Component {
                 });
         })
 
-        await fetch('https://services-eu1.arcgis.com/Zmea819kt4Uu8kML/arcgis/rest/services/CarParkingOpenData/FeatureServer/0/query?outFields=*&where=1%3D1&f=geojson')
+        await this.getData();
+        this.interval = setInterval(() => {this.getData()}, 10000);
+    }
+
+    getData(){
+        fetch('https://services-eu1.arcgis.com/Zmea819kt4Uu8kML/arcgis/rest/services/CarParkingOpenData/FeatureServer/0/query?outFields=*&where=1%3D1&f=geojson')
             .then((response) => response.json())
             .then((responseJson) => {
                 console.log(responseJson.features)
                 let markersList = this.setData(responseJson.features)
                 this.setState({ markers: markersList })
-                console.log("mark")
-            })
-            .then(() => {
-
             })
             .catch((error) => {
                 console.error(error);
             });
-
     }
 
     setData(markersArray) {
+        console.log('yo')
         let finalArray = [];
         markersArray.forEach(element => {
             let tempElement = {
@@ -77,6 +82,10 @@ export class Main extends React.Component {
             if (tempElement.full == "") tempElement.full = 0;
             tempElement.occupied = Math.round(Math.random() * tempElement.full);
             finalArray.push(tempElement);
+            if ((tempElement.occupied/tempElement.full)> 0.95 && this.state.notify == true) {
+                console.log(tempElement.markerName+tempElement.occupied/tempElement.full)
+                new Notification(tempElement.markerName + "is almost full.")
+            }
         });
         return finalArray;
     }
