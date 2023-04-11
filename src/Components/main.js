@@ -111,7 +111,6 @@ export class Main extends React.Component {
 
             finalArray.push(tempElement);
 
-            console.log(this.state.notify);
             // Notify user if the parking space is almost full
             if ((tempElement.occupied/tempElement.full)> 0.95 && this.state.notify === true) {
                 let markerName = this.state.markers.find((element) => tempElement.id === element.id).markerName;
