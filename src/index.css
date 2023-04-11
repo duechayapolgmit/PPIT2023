@@ -75,6 +75,9 @@ hr {
     width: 20%;
     cursor:pointer;
   }
+  .menu-button {
+    cursor:pointer;
+  }
 
   /* MARKERS' LIST */
   .markers-list {
@@ -184,6 +187,9 @@ hr {
     top:85%;
     left:45%;
     width: 15%;
+    cursor:pointer;
+  }
+  .menu-button {
     cursor:pointer;
   }
 

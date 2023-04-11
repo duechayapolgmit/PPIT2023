@@ -8,6 +8,7 @@ import Menu, { MenuList } from "./menu";
 
 import favourite_empty from '../Images/favourite_empty.png';
 import favourite_full from '../Images/favourite_full.png';
+import FavouritesSidebar from "./favourites";
 
 
 export class Main extends React.Component {
@@ -102,6 +103,14 @@ export class Main extends React.Component {
         console.log('click now')
     }
 
+    onFavouritesMenuClick = (markers) => {
+        this.setState({
+            markers: markers
+        })
+        document.getElementById("favourites-list-menu").classList.add("menu-show")
+        console.log(markers);
+    }
+
     onMenuCloseButtonClick = () => {
         document.getElementById("menu-overlay-list").classList.remove("menu-show");
     }
@@ -188,9 +197,10 @@ export class Main extends React.Component {
                     <InfoCard lat={this.state.latitude} lon={this.state.longitude} space={{ occupied: this.state.activeMarker.occupied, full: this.state.activeMarker.full }} type={this.state.activeMarker.type} marker={this.state.selectedPlace} />
                 </InfoWindow>
                 <MarkersSidebar markers={this.state.markers} lat={this.state.latitude} lon={this.state.longitude} />
+                <FavouritesSidebar markers={this.state.markers} lat={this.state.latitude} lon={this.state.longitude}/>
                 <FindClosestButton lat={this.state.latitude} lng={this.state.longitude} markers={this.state.markers} onFindButtonClick={this.onFindButtonClick} />
 
-                <MenuList onClickMenuCloseButton={this.onMenuCloseButtonClick} />
+                <MenuList onClickMenuCloseButton={this.onMenuCloseButtonClick} onFavouritesMenuClick={this.onFavouritesMenuClick} markers={this.state.markers}/>
             </Map>
         )
 
