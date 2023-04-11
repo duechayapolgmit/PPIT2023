@@ -3,6 +3,9 @@ import markerImage from '../Images/location_icon.png';
 import directionsImage from '../Images/directions.png';
 import closeIcon from '../Images/close_icon.png';
 
+import bell_on from '../Images/bell-on.png';
+import bell_off from '../Images/bell-off.png';
+
 export default function MarkersSidebar(props){
 
     const [markers, setMarkers] = useState(props.markers);

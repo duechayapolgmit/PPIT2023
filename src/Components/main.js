@@ -2,13 +2,15 @@ import React from "react";
 import { Map, GoogleApiWrapper, Marker, InfoWindow } from 'google-maps-react';
 import { InfoCard } from "./info";
 import { Markers } from "./markers";
-import { FindClosestButton, FindSpaceButton } from "./find";
+import { FooterMenu } from "./footerMenu";
 import MarkersSidebar from "./listMarkers";
 import Menu, { MenuList } from "./menu";
 
 import favourite_empty from '../Images/favourite_empty.png';
 import favourite_full from '../Images/favourite_full.png';
 
+import bell_on from '../Images/bell-on.png';
+import bell_off from '../Images/bell-off.png';
 
 export class Main extends React.Component {
 
@@ -30,7 +32,7 @@ export class Main extends React.Component {
         longitude: 0,
         currentLocationName: "",
         markers: [],
-        notify: true
+        notify: false
     }
 
     componentDidMount() {
@@ -54,7 +56,8 @@ export class Main extends React.Component {
                 });
         })
 
-        this.interval = setInterval(() => {this.markersInfo = this.setInfoData}, 10000);
+        this.interval = setInterval(() => {
+            this.markersInfo = this.setInfoData()}, 30000);
     }
 
     // Get data from API
@@ -74,7 +77,7 @@ export class Main extends React.Component {
     // Set geological data to an array of markers
     setData(markersArray) {
         let finalArray = [];
-        console.log('set data')
+        
         markersArray.forEach(element => {
             let tempElement = {
                 id: 0, markerName: "", latitude: 0, longitude: 0, type: "", capacity: 0
@@ -93,6 +96,7 @@ export class Main extends React.Component {
     // Set informational data (parking spaces) to an array of markers information
     setInfoData(){
         let finalArray = [];
+        console.log('set info data')
         let markersArray = this.state.markers; // get the markers from state
 
         // Loop through the markers array, get info data
@@ -107,9 +111,11 @@ export class Main extends React.Component {
 
             finalArray.push(tempElement);
 
+            console.log(this.state.notify);
             // Notify user if the parking space is almost full
-            if ((tempElement.occupied/tempElement.full)> 0.95 && this.state.notify == true) {
-                new Notification(tempElement.markerName + "is almost full.")
+            if ((tempElement.occupied/tempElement.full)> 0.95 && this.state.notify === true) {
+                let markerName = this.state.markers.find((element) => tempElement.id === element.id).markerName;
+                new Notification(markerName + " is almost full.")
             }
         })
         return finalArray;
@@ -186,6 +192,17 @@ export class Main extends React.Component {
         }
     }
 
+    onNotifyButtonClick(){
+        let notifyButton = document.getElementById("notify-button");
+        if (this.state.notify == true) {
+            this.setState({notify: false});
+            notifyButton.src = bell_off;
+        } else {
+            this.setState({notify: true});
+            notifyButton.src = bell_on;
+        }
+    }
+
     render() {
         const mapStyles = {
             width: '100%',
@@ -202,7 +219,6 @@ export class Main extends React.Component {
         }else{
             center = { lat: this.state.selectedPlace.position.lat, lng: this.state.selectedPlace.position.lng };
         }
-
         return (
             <Map
                 className="background"
@@ -218,13 +234,13 @@ export class Main extends React.Component {
                     onClick={this.onMarkerClick}>
                 </Marker>
 
-                <Markers markers={this.state.markers} onMarkerClick={this.onMarkerClick} />
+                <Markers markers={this.state.markers} onMarkerClick={this.onMarkerClick.bind(this)} />
                 <InfoWindow marker={this.state.activeMarker} visible={this.state.showingInfoWindow} onOpen={e => { this.onInfoWindowOpen(this.props, e); }}>
                     <InfoCard markersInfo={this.markersInfo} lat={this.state.latitude} lon={this.state.longitude} type={this.state.activeMarker.type} marker={this.state.selectedPlace} 
                         occupied={this.state.activeMarkerInfo.occupied} full={this.state.activeMarkerInfo.full}/>
                 </InfoWindow>
                 <MarkersSidebar markers={this.state.markers} markersInfo={this.markersInfo} lat={this.state.latitude} lon={this.state.longitude} />
-                <FindClosestButton lat={this.state.latitude} lng={this.state.longitude} markers={this.state.markers} onFindButtonClick={this.onFindButtonClick} />
+                <FooterMenu lat={this.state.latitude} lng={this.state.longitude} markers={this.state.markers} onNotifyButtonClick={this.onNotifyButtonClick.bind(this)} onFindButtonClick={this.onFindButtonClick} />
 
                 <MenuList onClickMenuCloseButton={this.onMenuCloseButtonClick} />
             </Map>
