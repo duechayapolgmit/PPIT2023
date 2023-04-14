@@ -3,6 +3,9 @@
 #API KEY
 .env
 
+# certification
+/certification
+
 # dependencies
 /node_modules
 /.pnp

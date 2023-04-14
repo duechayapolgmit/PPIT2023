@@ -167,6 +167,11 @@ export class Main extends React.Component {
 
     onInfoWindowOpen(props, e) {
         console.log("info window open")
+        // if activeMarkerInfo is undefined, set a default onw
+        if (this.state.activeMarkerInfo == null) {
+            this.setState({activeMarkerInfo: {occupied:0, full: 0}})
+        }
+
         var favourites = JSON.parse(localStorage.getItem('favourites'));
         if (favourites == null) favourites = []
         let button = document.createElement('button');
