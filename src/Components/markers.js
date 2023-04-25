@@ -21,12 +21,11 @@ export class Markers extends React.Component {
                 }
 
                 return <Marker
+                    key={marker.id}
                     position={{ lat: marker.latitude, lng: marker.longitude }}
                     name={marker.markerName}
                     type={marker.type}
                     id={marker.id}
-                    occupied={marker.occupied}
-                    full={marker.full}
                     map={map}
                     google={google}
                 	onClick={this.props.onMarkerClick}

@@ -34,8 +34,8 @@ export class InfoCard extends React.Component {
     }
 
     render() {
-        let percent = this.getPercent(this.props.name, this.props.space.occupied, this.props.space.full);
-        let capacity = this.getCapacity(this.props.space.occupied, this.props.space.full);
+        let percent = this.getPercent(this.props.name, this.props.occupied, this.props.full);
+        let capacity = this.getCapacity(this.props.occupied, this.props.full);
 
         var origin = this.props.lat + "," + this.props.lon;
         let destination = 0;

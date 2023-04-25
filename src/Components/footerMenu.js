@@ -1,6 +1,10 @@
-import React from "react"
+import React from "react";
 
-export class FindClosestButton extends React.Component {
+import bell_on from '../Images/bell-on.png';
+import bell_off from '../Images/bell-off.png';
+
+export class FooterMenu extends React.Component {
+
 
     getNearestSpace(lat, lng, markers) 
     {
@@ -28,6 +32,11 @@ export class FindClosestButton extends React.Component {
         return Value * Math.PI / 180;
     }
 
+    // Toggle notification for users
+    toggleNotification(){
+        this.props.onNotifyButtonClick();
+    }
+
     render(){
         const { google, map, lat, lng, markers } = this.props;
 
@@ -36,8 +45,14 @@ export class FindClosestButton extends React.Component {
         }
 
         return (
-        <div className="container find-button text-2xl bg-teal-500" onClick={() => this.getNearestSpace(lat, lng, markers)}>
-            Find
-        </div>)
+            <div className="container footer-menu text-2xl">
+                <div className="container find-button text-2xl bg-teal-500" onClick={() => this.getNearestSpace(lat, lng, markers)}>
+                    Find
+                </div>
+                <div className="container notify-button bg-teal-500">
+                    <img id="notify-button" src={bell_off} onClick={() => this.toggleNotification()}/>
+                </div>
+            </div>
+        )
     }
 }
