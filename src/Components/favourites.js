@@ -5,14 +5,15 @@ import React, { useState, useEffect } from "react"
 export default function FavouritesSidebar(props) {
 
     const [markers, setMarkers] = useState(props.markers);
-
+    const [markersInfo, setMarkersInfo] = useState(props.markersInfo);
     let closeList = () => {
         document.getElementById("favourites-list-menu").classList.remove("menu-show")
     }
 
     useEffect(() => {
         setMarkers(props.markers);
-    }, [props.markers])
+        setMarkersInfo(props.markersInfo);
+    }, [props.markers, props.markersInfo])
     return (
         <div id="favourites-list-menu" className="overlay markers-list bg-teal-500">
             <div className="markers-list-header">
@@ -20,20 +21,29 @@ export default function FavouritesSidebar(props) {
                 <img className="image-clickable" src={closeIcon} onClick={() => closeList()} />
             </div>
             <hr />
-            <FavouritesList markers={markers} lat={props.lat} lon={props.lon} />
+            <FavouritesList markers={markers} markersInfo={markersInfo} lat={props.lat} lon={props.lon} />
         </div>
     )
 }
 class FavouritesList extends React.Component {
     render() {
         return this.props.markers.map((marker) => {
-            return <FavouritesInfo marker={marker} lat={this.props.lat} lon={this.props.lon} />
+            return <FavouritesInfo marker={marker} markersInfo={this.props.markersInfo} lat={this.props.lat} lon={this.props.lon} />
         })
     }
 }
 
 export class FavouritesInfo extends React.Component {
-    // Get capacity HTML. Will not show if capacity is 0.
+    getInfo(marker) {
+        let defaultInfo = {
+            id: 0, occupied: 0, full: 0
+        };
+
+        let search = this.props.markersInfo.find(element => element.id === marker.id);
+        if (search === undefined) return defaultInfo;
+        return search;
+    }
+
     getCapacity(occupy, capacity) {
         if (capacity == 0) return;
         else return <span><br />Capacity: {occupy} / {capacity}</span>;
@@ -66,12 +76,15 @@ export class FavouritesInfo extends React.Component {
     render() {
         if (this.props.marker.distance > 40) return "";
 
+        // get info from info array
+        let info = this.getInfo(this.props.marker);
+
         // handles distance formatting
         let distance = 0;
         if (this.props.marker.distance != undefined) distance = this.props.marker.distance.toFixed(2);
-        
+
         // handles capacity formatting
-        let capacity = this.getCapacity(this.props.marker.occupied, this.props.marker.full);
+        let capacity = this.getCapacity(info.occupied, info.full);
         var origin = this.props.lat + "," + this.props.lon;
 
         //handles destination formatting
@@ -83,10 +96,11 @@ export class FavouritesInfo extends React.Component {
         }
 
         // handles percentage handling
-        let percent = this.getPercent(this.props.name, this.props.marker.occupied, this.props.marker.full);
+        let percent = this.getPercent(this.props.name, info.occupied, info.full);
 
         //generate URL for directions
         var url = `https://www.google.com/maps/dir/?api=1&origin=${origin}&destination=${latitude},${longitude}`;
+
 
         //check for favourites
         var favourites = JSON.parse(localStorage.getItem('favourites'));

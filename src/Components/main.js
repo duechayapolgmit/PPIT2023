@@ -40,7 +40,7 @@ export class Main extends React.Component {
         if (!("Notification" in window)) console.log("This browser does not support notifications")
         else Notification.requestPermission(); // request notification
         let latitude, longitude;
-        
+
         // Get current location via geolocation services from JS
         navigator.geolocation.getCurrentPosition(pos => {
             latitude = pos.coords.latitude;
@@ -58,17 +58,18 @@ export class Main extends React.Component {
         })
 
         this.interval = setInterval(() => {
-            this.markersInfo = this.setInfoData()}, 30000);
+            this.markersInfo = this.setInfoData()
+        }, 30000);
     }
 
     // Get data from API
-    getData(){
+    getData() {
         console.log('data')
         fetch('https://services-eu1.arcgis.com/Zmea819kt4Uu8kML/arcgis/rest/services/CarParkingOpenData/FeatureServer/0/query?outFields=*&where=1%3D1&f=geojson')
             .then((response) => response.json())
             .then((responseJson) => {
-                this.setState({markers: this.setData(responseJson.features) }) // Set marker geographical information
-                this.markersInfo = this.setInfoData(); // Set marker array information
+                this.setState({ markers: this.setData(responseJson.features) }) // Set marker geographical information
+                this.markersInfo = this.setInfoData(this.setData(responseJson.features)); // Set marker array information
             })
             .catch((error) => {
                 console.error(error);
@@ -78,7 +79,7 @@ export class Main extends React.Component {
     // Set geological data to an array of markers
     setData(markersArray) {
         let finalArray = [];
-        
+
         markersArray.forEach(element => {
             let tempElement = {
                 id: 0, markerName: "", latitude: 0, longitude: 0, type: "", capacity: 0
@@ -95,14 +96,19 @@ export class Main extends React.Component {
     }
 
     // Set informational data (parking spaces) to an array of markers information
-    setInfoData(){
+    setInfoData(markers) {
         let finalArray = [];
         console.log('set info data')
-        let markersArray = this.state.markers; // get the markers from state
-
+        let markersArray;
+        if (markers) {
+            markersArray = markers; // get the markers from state
+        }
+        else {
+            markersArray = this.state.markers; // get the markers from state
+        }
         // Loop through the markers array, get info data
         markersArray.forEach(element => {
-            let tempElement = { 
+            let tempElement = {
                 id: 0, occupied: 0, full: 0
             };
             tempElement.id = element.id;
@@ -113,11 +119,12 @@ export class Main extends React.Component {
             finalArray.push(tempElement);
 
             // Notify user if the parking space is almost full
-            if ((tempElement.occupied/tempElement.full)> 0.95 && this.state.notify === true) {
+            if ((tempElement.occupied / tempElement.full) > 0.95 && this.state.notify === true) {
                 let markerName = this.state.markers.find((element) => tempElement.id === element.id).markerName;
                 new Notification(markerName + " is almost full.")
             }
         })
+        console.log(finalArray)
         return finalArray;
     }
 
@@ -176,7 +183,7 @@ export class Main extends React.Component {
         console.log("info window open")
         // if activeMarkerInfo is undefined, set a default onw
         if (this.state.activeMarkerInfo == null) {
-            this.setState({activeMarkerInfo: {occupied:0, full: 0}})
+            this.setState({ activeMarkerInfo: { occupied: 0, full: 0 } })
         }
 
         var favourites = JSON.parse(localStorage.getItem('favourites'));
@@ -203,13 +210,13 @@ export class Main extends React.Component {
         }
     }
 
-    onNotifyButtonClick(){
+    onNotifyButtonClick() {
         let notifyButton = document.getElementById("notify-button");
         if (this.state.notify == true) {
-            this.setState({notify: false});
+            this.setState({ notify: false });
             notifyButton.src = bell_off;
         } else {
-            this.setState({notify: true});
+            this.setState({ notify: true });
             notifyButton.src = bell_on;
         }
     }
@@ -225,9 +232,9 @@ export class Main extends React.Component {
         //doesn't go back to their current location each time they
         //click on a marker
         var center;
-        if (this.state.selectedPlace.position === undefined){
+        if (this.state.selectedPlace.position === undefined) {
             center = { lat: this.state.latitude, lng: this.state.longitude };
-        }else{
+        } else {
             center = { lat: this.state.selectedPlace.position.lat, lng: this.state.selectedPlace.position.lng };
         }
         return (
@@ -241,21 +248,20 @@ export class Main extends React.Component {
                 streetViewControl={false} mapTypeControl={false} fullscreenControl={false}
             >
                 <Menu currentLocation={this.state.currentLocationName} onClickMenuButton={this.onMenuButtonClick} />
-                <Marker title={'Current Location'} name={'Current Location'} occupied={0} full={0} type={""} position={{ lat: this.state.latitude, lng: this.state.longitude } }
-                    onClick={this.onMarkerClick} icon={{ url: 'http://maps.google.com/mapfiles/ms/micons/green-dot.png',scaledSize: new window.google.maps.Size(40, 40) }}>
+                <Marker title={'Current Location'} name={'Current Location'} occupied={0} full={0} type={""} position={{ lat: this.state.latitude, lng: this.state.longitude }}
+                    onClick={this.onMarkerClick} icon={{ url: 'http://maps.google.com/mapfiles/ms/micons/green-dot.png', scaledSize: new window.google.maps.Size(40, 40) }}>
                 </Marker>
 
                 <Markers markers={this.state.markers} onMarkerClick={this.onMarkerClick.bind(this)} />
                 <InfoWindow marker={this.state.activeMarker} visible={this.state.showingInfoWindow} onOpen={e => { this.onInfoWindowOpen(this.props, e); }}>
-                    <InfoCard markersInfo={this.markersInfo} lat={this.state.latitude} lon={this.state.longitude} type={this.state.activeMarker.type} marker={this.state.selectedPlace} 
-                        occupied={this.state.activeMarkerInfo.occupied} full={this.state.activeMarkerInfo.full}/>
+                    <InfoCard markersInfo={this.markersInfo} lat={this.state.latitude} lon={this.state.longitude} type={this.state.activeMarker.type} marker={this.state.selectedPlace}
+                        occupied={this.state.activeMarkerInfo.occupied} full={this.state.activeMarkerInfo.full} />
                 </InfoWindow>
 
                 <MarkersSidebar markers={this.state.markers} markersInfo={this.markersInfo} lat={this.state.latitude} lon={this.state.longitude} />
-                <FavouritesSidebar markers={this.state.markers} lat={this.state.latitude} lon={this.state.longitude}/>
                 <FooterMenu lat={this.state.latitude} lng={this.state.longitude} markers={this.state.markers} onNotifyButtonClick={this.onNotifyButtonClick.bind(this)} onFindButtonClick={this.onFindButtonClick} />
-
-                <MenuList onClickMenuCloseButton={this.onMenuCloseButtonClick} onFavouritesMenuClick={this.onFavouritesMenuClick} markers={this.state.markers}/>
+                <MenuList onClickMenuCloseButton={this.onMenuCloseButtonClick} onFavouritesMenuClick={this.onFavouritesMenuClick} markers={this.state.markers} />
+                <FavouritesSidebar markers={this.state.markers} markersInfo={this.markersInfo} lat={this.state.latitude} lon={this.state.longitude} />
             </Map>
         )
 
