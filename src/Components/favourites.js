@@ -16,7 +16,7 @@ export default function FavouritesSidebar(props) {
     return (
         <div id="favourites-list-menu" className="overlay markers-list bg-teal-500">
             <div className="markers-list-header">
-                <div className="markers-list-heading"><h1 className="text-xl">List of Markers</h1></div>
+                <div className="markers-list-heading"><h1 className="text-xl">Favourites</h1></div>
                 <img className="image-clickable" src={closeIcon} onClick={() => closeList()} />
             </div>
             <hr />
@@ -87,15 +87,23 @@ export class FavouritesInfo extends React.Component {
 
         //generate URL for directions
         var url = `https://www.google.com/maps/dir/?api=1&origin=${origin}&destination=${latitude},${longitude}`;
-        return (
-            <div>
-                <div className="markers-list-single">
-                    <div className="markers-list-image-marker"><img src={markerImage} />{distance}km</div>
-                    <div className="markers-list-single-details"><p>{percent} <b>{this.props.marker.markerName}</b> {capacity}<br />{this.props.marker.type}</p></div>
-                    <div className="markers-list-button-directions"><a href={url}><img src={directionsImage} /></a></div>
+
+        //check for favourites
+        var favourites = JSON.parse(localStorage.getItem('favourites'));
+        if (favourites == null) favourites = [];
+        if (favourites.includes(this.props.marker.id)) {
+            return (
+                <div>
+                    <div className="markers-list-single">
+                        <div className="markers-list-image-marker"><img src={markerImage} />{distance}km</div>
+                        <div className="markers-list-single-details"><p>{percent} <b>{this.props.marker.markerName}</b> {capacity}<br />{this.props.marker.type}</p></div>
+                        <div className="markers-list-button-directions"><a href={url}><img src={directionsImage} /></a></div>
+                    </div>
+                    <hr />
                 </div>
-                <hr />
-            </div>
-        )
+            )
+        } else {
+            return null;
+        }
     }
 }

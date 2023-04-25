@@ -120,7 +120,6 @@ export class Main extends React.Component {
     }
 
     onFavouritesClick = (marker) => {
-        console.log("clicked favourites")
         var favourites = JSON.parse(localStorage.getItem('favourites'));
         if (favourites == null) favourites = []
         if (favourites.includes(marker.id)) {
@@ -130,7 +129,6 @@ export class Main extends React.Component {
         }
         localStorage.setItem("favourites", JSON.stringify(favourites));
         this.setState({ favourites: favourites });
-        console.log(localStorage);
     }
 
     onInfoWindowOpen(props, e) {
@@ -188,8 +186,8 @@ export class Main extends React.Component {
                 streetViewControl={false} mapTypeControl={false} fullscreenControl={false}
             >
                 <Menu currentLocation={this.state.currentLocationName} onClickMenuButton={this.onMenuButtonClick} />
-                <Marker title={'Current Location'} name={'Current Location'} occupied={0} full={0} type={""} position={{ lat: this.state.latitude, lng: this.state.longitude }}
-                    onClick={this.onMarkerClick}>
+                <Marker title={'Current Location'} name={'Current Location'} occupied={0} full={0} type={""} position={{ lat: this.state.latitude, lng: this.state.longitude } }
+                    onClick={this.onMarkerClick} icon={{ url: 'http://maps.google.com/mapfiles/ms/micons/green-dot.png',scaledSize: new window.google.maps.Size(40, 40) }}>
                 </Marker>
 
                 <Markers markers={this.state.markers} onMarkerClick={this.onMarkerClick} />
