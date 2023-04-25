@@ -103,6 +103,9 @@ hr {
     margin-right: auto; 
     cursor:pointer;
   }
+  .menu-button {
+    cursor:pointer;
+  }
 
 
   /* MARKERS' LIST */
@@ -241,6 +244,9 @@ hr {
     bottom: 0;
     margin-left: auto; 
     margin-right: auto; 
+    cursor:pointer;
+  }
+  .menu-button {
     cursor:pointer;
   }
 

@@ -8,6 +8,7 @@ import Menu, { MenuList } from "./menu";
 
 import favourite_empty from '../Images/favourite_empty.png';
 import favourite_full from '../Images/favourite_full.png';
+import FavouritesSidebar from "./favourites";
 
 import bell_on from '../Images/bell-on.png';
 import bell_off from '../Images/bell-off.png';
@@ -143,6 +144,14 @@ export class Main extends React.Component {
         console.log('click now')
     }
 
+    onFavouritesMenuClick = (markers) => {
+        this.setState({
+            markers: markers
+        })
+        document.getElementById("favourites-list-menu").classList.add("menu-show")
+        console.log(markers);
+    }
+
     onMenuCloseButtonClick = () => {
         document.getElementById("menu-overlay-list").classList.remove("menu-show");
     }
@@ -152,7 +161,6 @@ export class Main extends React.Component {
     }
 
     onFavouritesClick = (marker) => {
-        console.log("clicked favourites")
         var favourites = JSON.parse(localStorage.getItem('favourites'));
         if (favourites == null) favourites = []
         if (favourites.includes(marker.id)) {
@@ -162,7 +170,6 @@ export class Main extends React.Component {
         }
         localStorage.setItem("favourites", JSON.stringify(favourites));
         this.setState({ favourites: favourites });
-        console.log(localStorage);
     }
 
     onInfoWindowOpen(props, e) {
@@ -234,8 +241,8 @@ export class Main extends React.Component {
                 streetViewControl={false} mapTypeControl={false} fullscreenControl={false}
             >
                 <Menu currentLocation={this.state.currentLocationName} onClickMenuButton={this.onMenuButtonClick} />
-                <Marker title={'Current Location'} name={'Current Location'} occupied={0} full={0} type={""} position={{ lat: this.state.latitude, lng: this.state.longitude }}
-                    onClick={this.onMarkerClick}>
+                <Marker title={'Current Location'} name={'Current Location'} occupied={0} full={0} type={""} position={{ lat: this.state.latitude, lng: this.state.longitude } }
+                    onClick={this.onMarkerClick} icon={{ url: 'http://maps.google.com/mapfiles/ms/micons/green-dot.png',scaledSize: new window.google.maps.Size(40, 40) }}>
                 </Marker>
 
                 <Markers markers={this.state.markers} onMarkerClick={this.onMarkerClick.bind(this)} />
@@ -243,10 +250,12 @@ export class Main extends React.Component {
                     <InfoCard markersInfo={this.markersInfo} lat={this.state.latitude} lon={this.state.longitude} type={this.state.activeMarker.type} marker={this.state.selectedPlace} 
                         occupied={this.state.activeMarkerInfo.occupied} full={this.state.activeMarkerInfo.full}/>
                 </InfoWindow>
+
                 <MarkersSidebar markers={this.state.markers} markersInfo={this.markersInfo} lat={this.state.latitude} lon={this.state.longitude} />
+                <FavouritesSidebar markers={this.state.markers} lat={this.state.latitude} lon={this.state.longitude}/>
                 <FooterMenu lat={this.state.latitude} lng={this.state.longitude} markers={this.state.markers} onNotifyButtonClick={this.onNotifyButtonClick.bind(this)} onFindButtonClick={this.onFindButtonClick} />
 
-                <MenuList onClickMenuCloseButton={this.onMenuCloseButtonClick} />
+                <MenuList onClickMenuCloseButton={this.onMenuCloseButtonClick} onFavouritesMenuClick={this.onFavouritesMenuClick} markers={this.state.markers}/>
             </Map>
         )
 

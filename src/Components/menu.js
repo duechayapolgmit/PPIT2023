@@ -22,7 +22,7 @@ export class MenuList extends React.Component {
         return (
             <div id="menu-overlay-list" className="overlay menu-overlay-list bg-teal-500 text-xl">
                 <div className="menu-overlay-list-image" onClick={() => this.props.onClickMenuCloseButton()}><img src={closeIcon}/></div>
-                <div className="menu-overlay-list-single">Favourites</div>
+                <div className="menu-overlay-list-single menu-button" onClick={() => this.props.onFavouritesMenuClick(this.props.markers)}>Favourites</div>
                 <div className="menu-overlay-list-single">Settings</div>
             </div>
         )
