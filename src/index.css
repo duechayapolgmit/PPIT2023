@@ -166,8 +166,17 @@ hr {
   }
   
   .menu-overlay-list-single {
+    display: flex;
     margin-left: 5%;
     margin-bottom: 1em;
+  }
+
+  .menu-overlay-list-single-text {
+    width:70%;
+  }
+  
+  .menu-overlay-input {
+    width:25%;
   }
   
   .menu-overlay-list-image {
@@ -307,10 +316,18 @@ hr {
   }
   
   .menu-overlay-list-single {
+    display: flex;
     margin-left: 5%;
     margin-bottom: 7%;
   }
+
+  .menu-overlay-list-single-text {
+    width:70%;
+  }
   
+  .menu-overlay-input {
+    width:25%;
+  }
   .menu-overlay-list-image {
     max-height: 100%;
     max-width: 15%;
