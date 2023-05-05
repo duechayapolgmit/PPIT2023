@@ -8,16 +8,28 @@ export class Markers extends React.Component {
         if (!google || !map) {
             return null;
         }
-        return this.props.markers.map(
+        //merge markers and accessibility bays
+        var markers = [];
+        this.props.markers.map((marker) => {
+            markers.push(marker)
+        })
+        this.props.accessiblebays.map((marker) => {
+            markers.push(marker)
+        })
+        return markers.map(
             (marker) => {
                 //changing color to yellow if the marker is one of the favourites                
                 var favourites = JSON.parse(localStorage.getItem('favourites'));
 
-                if (favourites == null) 
-                    markerColor = 'red';
-                else{
-                    var isFavourite = favourites.includes(marker.id);
-                    var markerColor = isFavourite ? 'yellow' : 'red';
+                if (marker.id[0] == "A") {
+                    markerColor = 'blue';
+                } else {
+                    if (favourites == null)
+                        markerColor = 'red';
+                    else {
+                        var isFavourite = favourites.includes(marker.id);
+                        var markerColor = isFavourite ? 'yellow' : 'red';
+                    }
                 }
 
                 return <Marker
@@ -28,11 +40,11 @@ export class Markers extends React.Component {
                     id={marker.id}
                     map={map}
                     google={google}
-                	onClick={this.props.onMarkerClick}
+                    onClick={this.props.onMarkerClick}
                     icon={{
                         url: `http://maps.google.com/mapfiles/ms/micons/${markerColor}-dot.png`,
-                        scaledSize: new google.maps.Size(40, 40), 
-                      }}
+                        scaledSize: new google.maps.Size(40, 40),
+                    }}
                 ></Marker>
             }
         );

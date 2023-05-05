@@ -6,9 +6,10 @@ import { FooterMenu } from "./footerMenu";
 import MarkersSidebar from "./listMarkers";
 import Menu, { MenuList } from "./menu";
 
+import FavouritesSidebar from "./favourites";
+import accessiblebays from "../Data/accessiblebays.geojson"
 import favourite_empty from '../Images/favourite_empty.png';
 import favourite_full from '../Images/favourite_full.png';
-import FavouritesSidebar from "./favourites";
 
 import bell_on from '../Images/bell-on.png';
 import bell_off from '../Images/bell-off.png';
@@ -33,6 +34,7 @@ export class Main extends React.Component {
         longitude: 0,
         currentLocationName: "",
         markers: [],
+        accessiblebays: [],
         notify: false
     }
 
@@ -65,15 +67,37 @@ export class Main extends React.Component {
     // Get data from API
     getData() {
         console.log('data')
+        var markersData, accessibilityMarkersData;
         fetch('https://services-eu1.arcgis.com/Zmea819kt4Uu8kML/arcgis/rest/services/CarParkingOpenData/FeatureServer/0/query?outFields=*&where=1%3D1&f=geojson')
             .then((response) => response.json())
             .then((responseJson) => {
-                this.setState({ markers: this.setData(responseJson.features) }) // Set marker geographical information
-                this.markersInfo = this.setInfoData(this.setData(responseJson.features)); // Set marker array information
+                markersData = responseJson.features;
+
+                fetch(accessiblebays)
+            .then((response) => response.json())
+            .then((responseJson) => {
+                accessibilityMarkersData = responseJson.features;
+                //merge markers
+                var markers = [];
+                markersData.map((marker) => {
+                    markers.push(marker)
+                })
+                accessibilityMarkersData.map((marker) => {
+                    markers.push(marker)
+                })
+                this.setState({ markers: this.setData(markers) }) // Set marker geographical information
+                this.markersInfo = this.setInfoData(this.setData(markers)); // Set marker array information
+
             })
             .catch((error) => {
                 console.error(error);
             });
+            })
+            .catch((error) => {
+                console.error(error);
+            });
+
+        
     }
 
     // Set geological data to an array of markers
@@ -84,12 +108,17 @@ export class Main extends React.Component {
             let tempElement = {
                 id: 0, markerName: "", latitude: 0, longitude: 0, type: "", capacity: 0
             }
-            tempElement.id = element.id;
-            tempElement.markerName = element.properties.NAME;
+            if (element.properties.FID != null) {
+                tempElement.id = "A" + element.id
+                tempElement.markerName = "Accessibility Bay"
+            } else {
+                tempElement.id = element.id;
+                tempElement.markerName = element.properties.NAME;
+                tempElement.capacity = element.properties.NO_SPACES;
+            }
             tempElement.longitude = element.geometry.coordinates[0]
             tempElement.latitude = element.geometry.coordinates[1]
             tempElement.type = element.properties.TYPE;
-            tempElement.capacity = element.properties.NO_SPACES;
             finalArray.push(tempElement);
         });
         return finalArray;
@@ -101,7 +130,7 @@ export class Main extends React.Component {
         console.log('set info data')
         let markersArray;
         if (markers) {
-            markersArray = markers; // get the markers from state
+            markersArray = markers; // get the markers from parameters
         }
         else {
             markersArray = this.state.markers; // get the markers from state
@@ -119,12 +148,12 @@ export class Main extends React.Component {
             finalArray.push(tempElement);
 
             // Notify user if the parking space is almost full
-            if ((tempElement.occupied / tempElement.full) > 0.95 && this.state.notify === true) {
+            if ((tempElement.occupied / tempElement.full) > 0.01 && this.state.notify === true) {
                 let markerName = this.state.markers.find((element) => tempElement.id === element.id).markerName;
+
                 new Notification(markerName + " is almost full.")
             }
-        })
-        console.log(finalArray)
+        })  
         return finalArray;
     }
 
@@ -191,7 +220,7 @@ export class Main extends React.Component {
         let button = document.createElement('button');
         let image = document.createElement('img');
 
-        if (favourites.includes(this.state.selectedPlace.id)) {
+        if (favourites.includes(this.state.selectedPlace.id) ) {
             image.src = favourite_full;
         } else {
             image.src = favourite_empty;
@@ -205,7 +234,7 @@ export class Main extends React.Component {
             this.onFavouritesClick(this.state.selectedPlace)
         });
         const infoWindow = document.getElementById('infoWindow');
-        if (this.state.selectedPlace.id != null) {
+        if (this.state.selectedPlace.id != null && this.state.selectedPlace.id[0] != "A") {
             infoWindow.appendChild(button);
         }
     }
@@ -252,7 +281,7 @@ export class Main extends React.Component {
                     onClick={this.onMarkerClick} icon={{ url: 'http://maps.google.com/mapfiles/ms/micons/green-dot.png', scaledSize: new window.google.maps.Size(40, 40) }}>
                 </Marker>
 
-                <Markers markers={this.state.markers} onMarkerClick={this.onMarkerClick.bind(this)} />
+                <Markers accessiblebays={this.state.accessiblebays} markers={this.state.markers} onMarkerClick={this.onMarkerClick.bind(this)} />
                 <InfoWindow marker={this.state.activeMarker} visible={this.state.showingInfoWindow} onOpen={e => { this.onInfoWindowOpen(this.props, e); }}>
                     <InfoCard markersInfo={this.markersInfo} lat={this.state.latitude} lon={this.state.longitude} type={this.state.activeMarker.type} marker={this.state.selectedPlace}
                         occupied={this.state.activeMarkerInfo.occupied} full={this.state.activeMarkerInfo.full} />
