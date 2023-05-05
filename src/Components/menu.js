@@ -23,6 +23,10 @@ export class MenuList extends React.Component {
             <div id="menu-overlay-list" className="overlay menu-overlay-list bg-teal-500 text-xl">
                 <div className="menu-overlay-list-image" onClick={() => this.props.onClickMenuCloseButton()}><img src={closeIcon}/></div>
                 <div className="menu-overlay-list-single menu-button" onClick={() => this.props.onFavouritesMenuClick(this.props.markers)}>Favourites</div>
+                <div className="menu-overlay-list-single">
+                    <div className="menu-overlay-list-single-text">Refresh Delay (s)</div>
+                    <input className="menu-overlay-input" type="number" defaultValue={this.props.refreshRate} onInput={e => this.props.onRefreshRateUpdate(e)}/>
+                </div>
             </div>
         )
     }

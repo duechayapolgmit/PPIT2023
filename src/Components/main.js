@@ -35,7 +35,8 @@ export class Main extends React.Component {
         currentLocationName: "",
         markers: [],
         accessiblebays: [],
-        notify: false
+        notify: false,
+        refreshRate: 10
     }
 
     componentDidMount() {
@@ -48,7 +49,6 @@ export class Main extends React.Component {
             latitude = pos.coords.latitude;
             longitude = pos.coords.longitude;
             this.setState({ latitude: latitude, longitude: longitude })
-            console.log("nav")
             // Get information from current location
             fetch(`https://maps.googleapis.com/maps/api/geocode/json?latlng=${latitude},${longitude}&key=${process.env.REACT_APP_GOOGLE_API_KEY}`)
                 .then(res => res.json())
@@ -61,12 +61,11 @@ export class Main extends React.Component {
 
         this.interval = setInterval(() => {
             this.markersInfo = this.setInfoData()
-        }, 30000);
+        }, this.state.refreshRate*1000);
     }
 
     // Get data from API
     getData() {
-        console.log('data')
         var markersData, accessibilityMarkersData;
         fetch('https://services-eu1.arcgis.com/Zmea819kt4Uu8kML/arcgis/rest/services/CarParkingOpenData/FeatureServer/0/query?outFields=*&where=1%3D1&f=geojson')
             .then((response) => response.json())
@@ -127,7 +126,6 @@ export class Main extends React.Component {
     // Set informational data (parking spaces) to an array of markers information
     setInfoData(markers) {
         let finalArray = [];
-        console.log('set info data')
         let markersArray;
         if (markers) {
             markersArray = markers; // get the markers from parameters
@@ -172,12 +170,10 @@ export class Main extends React.Component {
             markers: markers
         })
         document.getElementById("markers-list-menu").classList.add("menu-show")
-        console.log(markers);
     }
 
     onMenuButtonClick = () => {
         document.getElementById("menu-overlay-list").classList.add("menu-show")
-        console.log('click now')
     }
 
     onFavouritesMenuClick = (markers) => {
@@ -185,7 +181,6 @@ export class Main extends React.Component {
             markers: markers
         })
         document.getElementById("favourites-list-menu").classList.add("menu-show")
-        console.log(markers);
     }
 
     onMenuCloseButtonClick = () => {
@@ -250,6 +245,16 @@ export class Main extends React.Component {
         }
     }
 
+    onRefreshRateUpdate= (e) => {
+        clearInterval(this.interval);
+        this.setState({refreshRate: e.target.value});
+
+        this.interval = setInterval(() => {
+            this.markersInfo = this.setInfoData()
+        }, this.state.refreshRate*1000);
+
+    }
+
     render() {
         const mapStyles = {
             width: '100%',
@@ -289,7 +294,7 @@ export class Main extends React.Component {
 
                 <MarkersSidebar markers={this.state.markers} markersInfo={this.markersInfo} lat={this.state.latitude} lon={this.state.longitude} />
                 <FooterMenu lat={this.state.latitude} lng={this.state.longitude} markers={this.state.markers} onNotifyButtonClick={this.onNotifyButtonClick.bind(this)} onFindButtonClick={this.onFindButtonClick} />
-                <MenuList onClickMenuCloseButton={this.onMenuCloseButtonClick} onFavouritesMenuClick={this.onFavouritesMenuClick} markers={this.state.markers} />
+                <MenuList onClickMenuCloseButton={this.onMenuCloseButtonClick} onFavouritesMenuClick={this.onFavouritesMenuClick} markers={this.state.markers} refreshRate={this.state.refreshRate} onRefreshRateUpdate={this.onRefreshRateUpdate}/>
                 <FavouritesSidebar markers={this.state.markers} markersInfo={this.markersInfo} lat={this.state.latitude} lon={this.state.longitude} />
             </Map>
         )
