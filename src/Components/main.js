@@ -60,43 +60,44 @@ export class Main extends React.Component {
         })
 
         this.interval = setInterval(() => {
-            this.markersInfo = this.setInfoData()
-        }, this.state.refreshRate*1000);
+            this.markersInfo = this.getData()
+        }, this.state.refreshRate * 1000);
     }
 
     // Get data from API
     getData() {
         var markersData, accessibilityMarkersData;
-        fetch('https://services-eu1.arcgis.com/Zmea819kt4Uu8kML/arcgis/rest/services/CarParkingOpenData/FeatureServer/0/query?outFields=*&where=1%3D1&f=geojson')
+        //https://services-eu1.arcgis.com/Zmea819kt4Uu8kML/arcgis/rest/services/CarParkingOpenData/FeatureServer/0/query?outFields=*&where=1%3D1&f=geojson
+        fetch('https://jsonblob.com/api/jsonBlob/1104130125171277824')
             .then((response) => response.json())
             .then((responseJson) => {
                 markersData = responseJson.features;
 
                 fetch(accessiblebays)
-            .then((response) => response.json())
-            .then((responseJson) => {
-                accessibilityMarkersData = responseJson.features;
-                //merge markers
-                var markers = [];
-                markersData.map((marker) => {
-                    markers.push(marker)
-                })
-                accessibilityMarkersData.map((marker) => {
-                    markers.push(marker)
-                })
-                this.setState({ markers: this.setData(markers) }) // Set marker geographical information
-                this.markersInfo = this.setInfoData(this.setData(markers)); // Set marker array information
+                    .then((response) => response.json())
+                    .then((responseJson) => {
+                        accessibilityMarkersData = responseJson.features;
+                        //merge markers
+                        var markers = [];
+                        markersData.map((marker) => {
+                            markers.push(marker)
+                        })
+                        accessibilityMarkersData.map((marker) => {
+                            markers.push(marker)
+                        })
+                        this.setState({ markers: this.setData(markers) }) // Set marker geographical information
+                        this.markersInfo = this.setInfoData(this.setData(markers)); // Set marker array information
 
+                    })
+                    .catch((error) => {
+                        console.error(error);
+                    });
             })
             .catch((error) => {
                 console.error(error);
             });
-            })
-            .catch((error) => {
-                console.error(error);
-            });
 
-        
+
     }
 
     // Set geological data to an array of markers
@@ -114,6 +115,7 @@ export class Main extends React.Component {
                 tempElement.id = element.id;
                 tempElement.markerName = element.properties.NAME;
                 tempElement.capacity = element.properties.NO_SPACES;
+                tempElement.occupied = element.properties.NO_OCCUPIED;
             }
             tempElement.longitude = element.geometry.coordinates[0]
             tempElement.latitude = element.geometry.coordinates[1]
@@ -141,17 +143,18 @@ export class Main extends React.Component {
             tempElement.id = element.id;
             tempElement.full = element.capacity;
             if (tempElement.full == "") tempElement.full = 0;
-            tempElement.occupied = Math.round(Math.random() * tempElement.full); // random number generator for occupied spaces -- temporary
+            //tempElement.occupied = Math.round(Math.random() * tempElement.full); // random number generator for occupied spaces -- temporary
+            tempElement.occupied = element.occupied;
 
             finalArray.push(tempElement);
 
             // Notify user if the parking space is almost full
-            if ((tempElement.occupied / tempElement.full) > 0.01 && this.state.notify === true) {
+            if ((tempElement.occupied / tempElement.full) > 0.95 && this.state.notify === true) {
                 let markerName = this.state.markers.find((element) => tempElement.id === element.id).markerName;
 
                 new Notification(markerName + " is almost full.")
             }
-        })  
+        })
         return finalArray;
     }
 
@@ -215,7 +218,7 @@ export class Main extends React.Component {
         let button = document.createElement('button');
         let image = document.createElement('img');
 
-        if (favourites.includes(this.state.selectedPlace.id) ) {
+        if (favourites.includes(this.state.selectedPlace.id)) {
             image.src = favourite_full;
         } else {
             image.src = favourite_empty;
@@ -229,7 +232,7 @@ export class Main extends React.Component {
             this.onFavouritesClick(this.state.selectedPlace)
         });
         const infoWindow = document.getElementById('infoWindow');
-        if (this.state.selectedPlace.id != null && this.state.selectedPlace.id[0] != "A") {
+        if (this.state.selectedPlace.id != null) {
             infoWindow.appendChild(button);
         }
     }
@@ -245,13 +248,13 @@ export class Main extends React.Component {
         }
     }
 
-    onRefreshRateUpdate= (e) => {
+    onRefreshRateUpdate = (e) => {
         clearInterval(this.interval);
-        this.setState({refreshRate: e.target.value});
+        this.setState({ refreshRate: e.target.value });
 
         this.interval = setInterval(() => {
             this.markersInfo = this.setInfoData()
-        }, this.state.refreshRate*1000);
+        }, this.state.refreshRate * 1000);
 
     }
 
@@ -271,6 +274,7 @@ export class Main extends React.Component {
         } else {
             center = { lat: this.state.selectedPlace.position.lat, lng: this.state.selectedPlace.position.lng };
         }
+
         return (
             <Map
                 className="background"
@@ -294,7 +298,11 @@ export class Main extends React.Component {
 
                 <MarkersSidebar markers={this.state.markers} markersInfo={this.markersInfo} lat={this.state.latitude} lon={this.state.longitude} />
                 <FooterMenu lat={this.state.latitude} lng={this.state.longitude} markers={this.state.markers} onNotifyButtonClick={this.onNotifyButtonClick.bind(this)} onFindButtonClick={this.onFindButtonClick} />
-                <MenuList onClickMenuCloseButton={this.onMenuCloseButtonClick} onFavouritesMenuClick={this.onFavouritesMenuClick} markers={this.state.markers} refreshRate={this.state.refreshRate} onRefreshRateUpdate={this.onRefreshRateUpdate}/>
+                <MenuList onClickMenuCloseButton={this.onMenuCloseButtonClick} onFavouritesMenuClick={this.onFavouritesMenuClick} markers={this.state.markers} 
+                Rate={this.state.refreshRate} onRefreshRateUpdate={this.onRefreshRateUpdate} 
+                lat={this.state.latitude} lon={this.state.longitude}
+                
+        />
                 <FavouritesSidebar markers={this.state.markers} markersInfo={this.markersInfo} lat={this.state.latitude} lon={this.state.longitude} />
             </Map>
         )

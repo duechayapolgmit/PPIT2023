@@ -22,14 +22,13 @@ export class Markers extends React.Component {
                 var favourites = JSON.parse(localStorage.getItem('favourites'));
 
                 if (marker.id[0] == "A") {
-                    markerColor = 'blue';
+                    var isFavourite = favourites.includes(marker.id);
+                    var markerColor = isFavourite ? 'yellow' : 'blue';
                 } else {
-                    if (favourites == null)
-                        markerColor = 'red';
-                    else {
-                        var isFavourite = favourites.includes(marker.id);
-                        var markerColor = isFavourite ? 'yellow' : 'red';
-                    }
+
+                    var isFavourite = favourites.includes(marker.id);
+                    var markerColor = isFavourite ? 'yellow' : 'red';
+
                 }
 
                 return <Marker

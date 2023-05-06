@@ -14,6 +14,7 @@ export default function FavouritesSidebar(props) {
         setMarkers(props.markers);
         setMarkersInfo(props.markersInfo);
     }, [props.markers, props.markersInfo])
+    
     return (
         <div id="favourites-list-menu" className="overlay markers-list bg-teal-500">
             <div className="markers-list-header">
@@ -26,7 +27,12 @@ export default function FavouritesSidebar(props) {
     )
 }
 class FavouritesList extends React.Component {
+    toRad(Value) 
+    {
+        return Value * Math.PI / 180;
+    }
     render() {
+        
         return this.props.markers.map((marker) => {
             return <FavouritesInfo marker={marker} markersInfo={this.props.markersInfo} lat={this.props.lat} lon={this.props.lon} />
         })
@@ -79,7 +85,6 @@ export class FavouritesInfo extends React.Component {
         // get info from info array
         let info = this.getInfo(this.props.marker);
 
-        // handles distance formatting
         let distance = 0;
         if (this.props.marker.distance != undefined) distance = this.props.marker.distance.toFixed(2);
 
