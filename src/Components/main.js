@@ -16,7 +16,7 @@ import bell_off from '../Images/bell-off.png';
 
 export class Main extends React.Component {
 
-    markersInfo = []; // Outside of state, as setting the state will refresh the entire thing
+  
 
     constructor() {
         super();
@@ -36,7 +36,8 @@ export class Main extends React.Component {
         markers: [],
         accessiblebays: [],
         notify: false,
-        refreshRate: 10
+        refreshRate: 10,
+        markersInfo: [] 
     }
 
     componentDidMount() {
@@ -54,21 +55,18 @@ export class Main extends React.Component {
                 .then(res => res.json())
                 .then(resJson => {
                     this.setState({ currentLocationName: resJson.results[0].formatted_address });
-                    console.log("info")
                     this.getData();
                 });
         })
 
-        this.interval = setInterval(() => {
-            this.markersInfo = this.getData()
-        }, this.state.refreshRate * 1000);
+
     }
 
     // Get data from API
     getData() {
         var markersData, accessibilityMarkersData;
         //https://services-eu1.arcgis.com/Zmea819kt4Uu8kML/arcgis/rest/services/CarParkingOpenData/FeatureServer/0/query?outFields=*&where=1%3D1&f=geojson
-        fetch('https://jsonblob.com/api/jsonBlob/1104130125171277824')
+        fetch('https://jsonblob.com/api/jsonBlob/1107747784764964864')
             .then((response) => response.json())
             .then((responseJson) => {
                 markersData = responseJson.features;
@@ -86,7 +84,9 @@ export class Main extends React.Component {
                             markers.push(marker)
                         })
                         this.setState({ markers: this.setData(markers) }) // Set marker geographical information
-                        this.markersInfo = this.setInfoData(this.setData(markers)); // Set marker array information
+                        //this.markersInfo = this.setInfoData(this.setData(markers)); // Set marker array information
+                        this.setInfoData(this.state.markers)
+                        console.log(this.state.markersInfo[0])
 
                     })
                     .catch((error) => {
@@ -122,13 +122,16 @@ export class Main extends React.Component {
             tempElement.type = element.properties.TYPE;
             finalArray.push(tempElement);
         });
-        return finalArray;
+        return this.getNearestSpace(finalArray);
     }
 
     // Set informational data (parking spaces) to an array of markers information
     setInfoData(markers) {
+
+
         let finalArray = [];
         let markersArray;
+        console.log(markers)
         if (markers) {
             markersArray = markers; // get the markers from parameters
         }
@@ -155,11 +158,12 @@ export class Main extends React.Component {
                 new Notification(markerName + " is almost full.")
             }
         })
-        return finalArray;
+        console.log(finalArray[0])
+        this.setState({markersInfo: finalArray})
     }
 
     onMarkerClick = (props, marker, e) => {
-        let activeMarkerInfo = this.markersInfo.find((element) => element.id == marker.id);
+        let activeMarkerInfo = this.state.markersInfo.find((element) => element.id == marker.id);
         this.setState({
             selectedPlace: props,
             activeMarkerInfo: activeMarkerInfo,
@@ -168,10 +172,7 @@ export class Main extends React.Component {
         });
     }
 
-    onFindButtonClick = (markers) => {
-        this.setState({
-            markers: markers
-        })
+    onFindButtonClick = () => {
         document.getElementById("markers-list-menu").classList.add("menu-show")
     }
 
@@ -250,12 +251,42 @@ export class Main extends React.Component {
 
     onRefreshRateUpdate = (e) => {
         clearInterval(this.interval);
-        this.setState({ refreshRate: e.target.value });
+        if (e === undefined)
+            this.setState({ refreshRate: 10 });
+        else
+            this.setState({ refreshRate: e.target.value });
 
         this.interval = setInterval(() => {
-            this.markersInfo = this.setInfoData()
+            //this.markersInfo = this.setInfoData()
+            this.getData();
+            console.log(this.state.refreshRate);
         }, this.state.refreshRate * 1000);
 
+    }
+
+    getNearestSpace(markers) 
+    {
+        markers.forEach(marker => {
+            let coords = [marker.longitude, marker.latitude]
+            var R = 6371; // in kilometers
+            var dLat = this.toRad(coords[1]-this.state.latitude);
+            var dLon = this.toRad(coords[0]-this.state.longitude);
+            var lat1 = this.toRad(this.state.latitude);
+            var lat2 = this.toRad(coords[1]);
+
+            var a = Math.sin(dLat/2) * Math.sin(dLat/2) + Math.sin(dLon/2) * Math.sin(dLon/2) * Math.cos(lat1) * Math.cos(lat2); 
+            var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)); 
+            var d = R * c;
+            marker.distance = d;
+        });
+
+        markers.sort( (a,b) => a.distance - b.distance);
+
+        return markers
+    }
+    toRad(Value) 
+    {
+        return Value * Math.PI / 180;
     }
 
     render() {
@@ -275,6 +306,8 @@ export class Main extends React.Component {
             center = { lat: this.state.selectedPlace.position.lat, lng: this.state.selectedPlace.position.lng };
         }
 
+        
+
         return (
             <Map
                 className="background"
@@ -292,18 +325,18 @@ export class Main extends React.Component {
 
                 <Markers accessiblebays={this.state.accessiblebays} markers={this.state.markers} onMarkerClick={this.onMarkerClick.bind(this)} />
                 <InfoWindow marker={this.state.activeMarker} visible={this.state.showingInfoWindow} onOpen={e => { this.onInfoWindowOpen(this.props, e); }}>
-                    <InfoCard markersInfo={this.markersInfo} lat={this.state.latitude} lon={this.state.longitude} type={this.state.activeMarker.type} marker={this.state.selectedPlace}
+                    <InfoCard markersInfo={this.state.markersInfo} lat={this.state.latitude} lon={this.state.longitude} type={this.state.activeMarker.type} marker={this.state.selectedPlace}
                         occupied={this.state.activeMarkerInfo.occupied} full={this.state.activeMarkerInfo.full} />
                 </InfoWindow>
 
-                <MarkersSidebar markers={this.state.markers} markersInfo={this.markersInfo} lat={this.state.latitude} lon={this.state.longitude} />
+                <MarkersSidebar markers={this.state.markers} markersInfo={this.state.markersInfo} lat={this.state.latitude} lon={this.state.longitude} />
                 <FooterMenu lat={this.state.latitude} lng={this.state.longitude} markers={this.state.markers} onNotifyButtonClick={this.onNotifyButtonClick.bind(this)} onFindButtonClick={this.onFindButtonClick} />
-                <MenuList onClickMenuCloseButton={this.onMenuCloseButtonClick} onFavouritesMenuClick={this.onFavouritesMenuClick} markers={this.state.markers} 
-                Rate={this.state.refreshRate} onRefreshRateUpdate={this.onRefreshRateUpdate} 
-                lat={this.state.latitude} lon={this.state.longitude}
-                
-        />
-                <FavouritesSidebar markers={this.state.markers} markersInfo={this.markersInfo} lat={this.state.latitude} lon={this.state.longitude} />
+                <MenuList onClickMenuCloseButton={this.onMenuCloseButtonClick} onFavouritesMenuClick={this.onFavouritesMenuClick} markers={this.state.markers}
+                    refreshRate={this.state.refreshRate} onRefreshRateUpdate={this.onRefreshRateUpdate}
+                    lat={this.state.latitude} lon={this.state.longitude}
+
+                />
+                <FavouritesSidebar markers={this.state.markers} markersInfo={this.state.markersInfo} lat={this.state.latitude} lon={this.state.longitude} />
             </Map>
         )
 
